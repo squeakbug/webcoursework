@@ -1,0 +1,39 @@
+version: "3.3"
+
+services:
+  reverseproxy:
+    build:
+      context: reverseproxy
+      dockerfile: Dockerfile
+    container_name: reverseproxy_001
+    stdin_open: true
+    tty: true
+    volumes:
+      - /etc/nginx
+      - /usr/share/nginx/html
+    ports:
+      - 80:80
+      - 59572
+      - 1433
+    restart: always
+    networks:
+      - backend
+  phpfpm:
+    image: bitnami/php-fpm:7.2-debian-10
+    ports:
+      - 9000:9000
+    volumes:
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    hostname: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+
+networks:
+  backend:

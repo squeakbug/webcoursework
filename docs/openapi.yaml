@@ -1,0 +1,880 @@
+openapi: 3.0.3
+info:
+  title: TheDotFactoryChanges - OpenAPI 3.0
+  termsOfService: http://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+tags:
+  - name: user
+  - name: font
+  - name: configuration
+  - name: convertion
+servers:
+  - url: https://localhost:{port}/api/{basePath}
+    variables:
+      port:
+        enum:
+          - '59572'
+        default: '59572'
+      basePath:
+        enum:
+          - 'v1'
+        default: v1
+paths:
+  /users:
+    get:
+      tags:
+        - user
+      summary: Get users information
+      description: Get users information
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: Not allowed
+        '500':
+          description: Server error
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      summary: Get user information
+      description: Get user information
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+        '403':
+          description: Not allowed
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+    patch:
+      tags:
+        - user
+      summary: Get user information
+      description: Get user information
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: User registration
+        content:
+          application/json-patch+json:
+            schema:
+              $ref: '#/components/schemas/UserPatchRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '403':
+          description: Not allowed
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+  /users/login:
+    get:
+      tags:
+        - user
+      summary: User login
+      description: User login
+      parameters:
+        - name: login
+          in: query
+          description: Login name
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+  /users/logout:
+    get:
+      tags:
+        - user
+      summary: User logout
+      description: User logout
+      parameters:
+        - name: id
+          in: query
+          description: The user id for logout
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '403':
+          description: Not allowed
+        '500':
+          description: Server error
+  /users/registration:
+    post:
+      tags:
+        - user
+      summary: User registration
+      description: User registration
+      requestBody:
+        description: User registration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+        '400':
+          description: User is already registered
+        '500':
+          description: Server error
+  /fontNames:
+    get:
+      tags:
+        - font
+      summary: Get available font names
+      description: Get available font names
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FontName'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /fonts:
+    get:
+      tags:
+        - font
+      summary: Get font
+      description: Get font
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Font'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+    post:
+      tags:
+        - font
+      summary: Create font
+      description: Create font
+      requestBody:
+        description: Font
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Font'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+        '401':
+          description: User not authorized
+        '500':
+          description: Server error
+  /fonts/{fontId}:
+    get:
+      tags:
+        - font
+      summary: Get available fonts
+      description: Get available fonts
+      parameters:
+        - name: fontId
+          in: path
+          description: Font id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Font'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+    delete:
+      tags:
+        - font
+      summary: Delete font by id
+      description: Delete font by id
+      parameters:
+        - name: fontId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '404':
+          description: Font not found
+        '500':
+          description: Server error
+    put:
+      tags:
+        - font
+      summary: Update font
+      description: Update font
+      parameters:
+        - name: fontId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Font
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Font'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '401':
+          description: User not authorized
+        '404':
+          description: Font not found
+        '500':
+          description: Server error
+  /configurationNames:
+    get:
+      tags:
+        - configuration
+      summary: Get available configuration names
+      description: Get available configuration names
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConfigurationName'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /configurations:
+    get:
+      tags:
+        - configuration
+      summary: Get available configurations
+      description: Get available configurations
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Configuration'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+    post:
+      tags:
+        - configuration
+      summary: Create configurations
+      description: Create configurations
+      requestBody:
+        description: Configuration
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Configuration'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+        '401':
+          description: User not authorized
+        '500':
+          description: Server error
+  /configurations/{configurationId}:
+    get:
+      tags:
+        - configuration
+      summary: Get configuration by id
+      description: Get configuration by id
+      parameters:
+        - name: configurationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+        '401':
+          description: User not authorized
+        '404':
+          description: Configuration not found
+        '500':
+          description: Server error
+    put:
+      tags:
+        - configuration
+      summary: Update configuration
+      description: Update configuration
+      parameters:
+        - name: configurationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '401':
+          description: User not authorized
+        '404':
+          description: Configuration not found
+        '500':
+          description: Server error
+    delete:
+      tags:
+        - configuration
+      summary: Delete configuration by id
+      description: Delete configuration by id
+      parameters:
+        - name: configurationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '404':
+          description: Configuration not found
+        '500':
+          description: Server error
+  /convertionsNames:
+    get:
+      tags:
+        - configuration
+      summary: Get convertion names
+      description: Get convertion names
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConvertionName'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /convertions:
+    get:
+      tags:
+        - configuration
+      summary: Get convertions
+      description: Get convertions
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Convertion'
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /convertions/{convertionId}:
+    get:
+      tags:
+        - configuration
+      summary: Get convertion by id
+      description: Get convertion by id
+      parameters:
+        - name: convertionId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Convertion'
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /convertions/doConvertion/fromTemplate:
+    post:
+      tags:
+        - configuration
+      summary: Make convertion
+      description: Make convertion
+      requestBody:
+        description: Input for convertion
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoConvertionFromTemplateRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoConvertionResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+  /convertions/saveConvertion:
+    post:
+      tags:
+        - configuration
+      summary: Save convertion
+      description: Save convertion
+      requestBody:
+        description: Convertion
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveConvertionRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveConvertionResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
+components:
+  schemas:
+    User:
+      required:
+        - name
+        - login
+        - password
+      type: object
+      properties:
+        name:
+          type: string
+          example: string
+        login:
+          type: string
+          example: string
+        password:
+          type: string
+          example: string
+    UserPatchRequest:
+      required:
+        - op
+        - value
+        - path
+      type: object
+      properties:
+        op:
+          description: Operation
+          type: string
+          enum:
+            - ChangePassword
+            - ChangeName
+        path:
+          description: A JSON Pointer path.
+          type: string
+        value:
+          description: The value to add, replace or test.
+          type: string
+    NewUser:
+      required:
+        - login
+        - password
+        - repPassword
+      type: object
+      properties:
+        login:
+          type: string
+          example: string
+        password:
+          type: string
+          example: string
+        repPassword:
+          type: string
+          example: string
+    FontName:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: string
+    Font:
+      required:
+        - id
+        - name
+        - size
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        size:
+          type: integer
+          format: int64
+    ConfigurationName:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: string
+    Configuration:
+      required:
+        - id
+        - userId
+        - commentVariableName
+        - commentCharVisualizer
+        - commentCharDescriptor
+        - commentStyle
+        - bmpVisualizerChar
+        - rotation
+        - flipHorizontal
+        - flipVertical
+        - paddingRemovalHorizontal
+        - paddingRemovalVertical
+        - bitLayout
+        - byteOrder
+        - byteFormat
+        - generateLookupArray
+        - generateSpaceCharacterBitmap
+        - spaceGenerationPixels
+        - minHeight
+        - varNfBitmaps
+        - varNfCharInfo
+        - varNfFontInfo
+        - varNfWidth
+        - varNfHeight
+        - displayName
+        - commentStartString
+        - commentBlockEndString
+        - commentBlockMiddleString
+        - commentEndString
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        commentVariableName:
+          type: boolean
+          example: true
+        commentCharVisualizer:
+          type: boolean
+          example: true
+        commentCharDescriptor:
+          type: boolean
+          example: true
+        commentStyle:
+          type: string
+          enum:
+            - c
+            - cpp
+        bmpVisualizerChar:
+          type: string
+          example: string
+        rotation:
+          type: string
+          enum:
+            - RotateZero
+            - RotateNinety
+            - RotateOneEighty
+            - RotateTwoSeventy
+        flipHorizontal:
+          type: boolean
+          example: true
+        flipVertical:
+          type: boolean
+          example: true
+        paddingRemovalHorizontal:
+          type: string
+          enum:
+            - None
+            - Tighest
+            - Fixed
+        paddingRemovalVertical:
+          type: string
+          enum:
+            - None
+            - Tighest
+            - Fixed
+        bitLayout:
+          type: string
+          enum:
+            - RowMajor
+            - ColumnMajor
+        byteOrder:
+          type: string
+          enum:
+            - LsbFirst
+            - MsbFirst
+        byteFormat:
+          type: string
+          enum:
+            - Binary
+            - Hex
+        generateLookupArray:
+          type: boolean
+          example: true
+        generateSpaceCharacterBitmap:
+          type: boolean
+          example: true
+        spaceGenerationPixels:
+          type: integer
+          format: int64
+          example: 10
+        minHeight:
+          type: integer
+          format: int64
+          example: 10
+        varNfBitmaps:
+          type: string
+          example: string
+        varNfCharInfo:
+          type: string
+          example: string
+        varNfFontInfo:
+          type: string
+          example: string
+        varNfWidth:
+          type: string
+          example: string
+        varNfHeight:
+          type: string
+          example: string
+        displayName:
+          type: string
+          example: string
+        commentStartString:
+          type: string
+          example: string
+        commentBlockEndString:
+          type: string
+          example: string
+        commentBlockMiddleString:
+          type: string
+          example: string
+        commentEndString:
+          type: string
+          example: string
+    ConvertionName:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: string
+    Convertion:
+      required:
+        - id
+        - head
+        - body
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        head:
+          type: string
+          example: string
+        body:
+          type: string
+          example: string
+    DoConvertionFromTemplateRequest:
+      required:
+        - fontIndex
+        - configIndex
+        - template
+      type: object
+      properties:
+        fontIndex:
+          type: integer
+          format: int32
+          example: 10
+        configIndex:
+          type: integer
+          format: int32
+          example: 10
+        template:
+          type: string
+          example: string
+    DoConvertionResponse:
+      required:
+        - head
+        - body
+      type: object
+      properties:
+        head:
+          type: string
+          example: string
+        body:
+          type: string
+          example: string
+    SaveConvertionRequest:
+      required:
+        - name
+        - head
+        - body
+      type: object
+      properties:
+        name:
+          type: string
+          example: string
+        head:
+          type: string
+          example: string
+        body:
+          type: string
+          example: string
+    SaveConvertionResponse:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
