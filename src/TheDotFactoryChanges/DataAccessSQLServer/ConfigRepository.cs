@@ -8,9 +8,9 @@ namespace DataAccessSQLServer
 {
     public class ConfigRepository : IConfigRepository
     {
-        Context _ctx;
+        IDbContext _ctx;
 
-        public ConfigRepository(Context ctx)
+        public ConfigRepository(IDbContext ctx)
         {
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
@@ -35,9 +35,10 @@ namespace DataAccessSQLServer
         }
         public int Create(DataAccessInterface.Configuration cfg)
         {
-            _ctx.UserConfig.Add(ConfigConverter.MapFromBusinessEntity(cfg));
+            var dbCfg = ConfigConverter.MapFromBusinessEntity(cfg);
+            _ctx.UserConfig.Add(dbCfg);
             _ctx.SaveChanges();
-            return cfg.Id;
+            return dbCfg.Id;
         }
         public void Update(DataAccessInterface.Configuration cfg)
         {

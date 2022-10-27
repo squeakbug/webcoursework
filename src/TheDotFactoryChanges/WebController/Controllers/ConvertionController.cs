@@ -52,12 +52,14 @@ namespace WebControllers.Controllers
             {
                 convertions = _service.GetConvertions();
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -70,13 +72,14 @@ namespace WebControllers.Controllers
                         Name = item.Name
                     });
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.Log(LogLevel.Error, ex.Message);
                     return StatusCode(500);
                 }
             }
 
-            return Ok(convertions);
+            return Ok(convertionsDTO);
         }
 
         [Authorize]
@@ -92,12 +95,14 @@ namespace WebControllers.Controllers
             {
                 convertions = _service.GetConvertions();
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -112,13 +117,14 @@ namespace WebControllers.Controllers
                         Id = item.Id,
                     });
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.Log(LogLevel.Error, ex.Message);
                     return StatusCode(500);
                 }
             }
 
-            return Ok(convertions);
+            return Ok(convertionsDTO);
         }
 
         [Authorize]
@@ -134,17 +140,20 @@ namespace WebControllers.Controllers
             {
                 convertion = _service.GetConvertionById(convertionId);
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
             if (convertion == null)
             {
+                _logger.Log(LogLevel.Error, "resourse not found");
                 return StatusCode(404);
             }
 
@@ -158,29 +167,37 @@ namespace WebControllers.Controllers
         }
 
         [Authorize]
-        [HttpPost, Route("convertions/doConvertion/fromTemplate")]
+        [HttpGet, Route("convertions/from-template")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoConvertionResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> FromTemplate([FromBody] DoConvertionFromTemplateRequest body)
+        public async Task<IActionResult> FromTemplate([FromQuery] int fontId, [FromQuery] int configId,
+            [FromQuery] string template)
         {
             string source, header;
             try
             {
-                _service.SetCurrentConfig(body.ConfigId);
-                _service.SetCurrentFont(body.FontId);
-                _service.SetInputText(body.Template);
+                _service.SetCurrentConfig(configId);
+                _service.SetCurrentFont(fontId);
+                _service.SetInputText(template);
                 _service.ConvertFont(true);
                 source = _service.GetOutputSourceText();
                 header = _service.GetOutputHeaderText();
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ApplicationException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
+                return StatusCode(400);
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -193,7 +210,8 @@ namespace WebControllers.Controllers
             return Ok(response);
         }
 
-        [HttpPost, Route("convertions/saveConvertion")]
+        [Authorize]
+        [HttpPost, Route("convertions")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SaveConvertionResponse))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -211,16 +229,19 @@ namespace WebControllers.Controllers
                 };
                 newId = _service.AddConvertion(newConvertion);
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ClientErrorException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(400);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 

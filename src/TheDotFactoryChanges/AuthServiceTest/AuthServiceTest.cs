@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace AuthServiceTest
 {
-    //[AllureNUnit]
+    [AllureNUnit]
     public class AuthServiceTest
     {
         [Test]
@@ -77,7 +77,7 @@ namespace AuthServiceTest
 
             TestDelegate del = () => sut.LoginUser("user", "pass");
 
-            Assert.Throws<ApplicationException>(del);
+            Assert.Throws<NotFoundException>(del);
         }
 
         [Test]
@@ -232,6 +232,26 @@ namespace AuthServiceTest
             TestDelegate del = () => sut.UpdateUserPassword(user.Id, null);
 
             Assert.Throws<ClientErrorException>(del);
+        }
+
+        [Test]
+        public void UpdateUserNameTest()
+        {
+            var userRepoMock = new Mock<IUserRepository>();
+            var repoMock = new Mock<IRepositoryFactory>();
+            repoMock.Setup(factory => factory.CreateUserRepository())
+                    .Returns(userRepoMock.Object);
+            var user = GetUnlogginedUserInfoSample()[0];
+            user.Loggined = true;
+            userRepoMock.Setup(repo => repo.GetUserById(user.Id))
+                        .Returns(user);
+            user.Name = "test";
+            userRepoMock.Setup(repo => repo.Update(user));
+            var sut = new AuthService.AuthService(repoMock.Object);
+
+            sut.UpdateUserName(user.Id, "test");
+
+            userRepoMock.Verify(r => r.Update(user));
         }
 
         [Test]

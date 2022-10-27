@@ -45,6 +45,7 @@ namespace DataAccessSQLServer
                 varNfFontInfo = info.VarNfFontInfo,
                 varNfHeight = info.VarNfHeight,
                 varNfWidth = info.VarNfWidth,
+                UserId = info.Ui_id,
             };
         }
 

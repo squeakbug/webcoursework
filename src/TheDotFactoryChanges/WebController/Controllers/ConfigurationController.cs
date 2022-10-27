@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 using WebControllers.Models;
 using DataAccessInterface;
@@ -37,6 +38,7 @@ namespace WebControllers.Controllers
             _service.ConfigsUpdated += () => { };
         }
 
+        [Authorize]
         [HttpGet, Route("configurationNames")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ConfigurationNameDTO>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -49,8 +51,9 @@ namespace WebControllers.Controllers
             {
                 configs = _service.GetConfigurations();
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
             foreach (var item in configs)
@@ -58,6 +61,7 @@ namespace WebControllers.Controllers
             return Ok(configNames);
         }
 
+        [Authorize]
         [HttpGet, Route("configurations")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ConfigurationDTO>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -81,14 +85,16 @@ namespace WebControllers.Controllers
                     ConfigurationDTO dto = ConfigToConfigDTO(item);
                     configsDTO.Add(dto);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.Log(LogLevel.Error, ex.Message);
                     return StatusCode(500);
                 }
             }
             return Ok(configsDTO);
         }
 
+        [Authorize]
         [HttpPost, Route("configurations")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -101,14 +107,16 @@ namespace WebControllers.Controllers
                 {
                     _service.CreateConfig(ConfigFromConfigDTO(item));
                 }
-                catch (ApplicationException)
+                catch (ApplicationException ex)
                 {
+                    _logger.Log(LogLevel.Error, ex.Message);
                     return StatusCode(500);
                 }
             }
             return Ok();
         }
 
+        [Authorize]
         [HttpGet, Route("configurations/{configurationId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ConfigurationDTO))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -120,6 +128,7 @@ namespace WebControllers.Controllers
             return Ok(ConfigToConfigDTO(_service.GetConfigById((int)configurationId)));
         }
 
+        [Authorize]
         [HttpPut, Route("configurations/{configurationId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -133,8 +142,9 @@ namespace WebControllers.Controllers
             {
                 _service.UpdateConfig(ConfigFromConfigDTO(body));
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -148,6 +158,7 @@ namespace WebControllers.Controllers
         /// Delete configuration by id
         /// </remarks>
         /// <returns>Successful operation</returns>
+        [Authorize]
         [HttpDelete, Route("configurations/{configurationId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -160,20 +171,24 @@ namespace WebControllers.Controllers
             {
                 _service.DeleteConfig((int)configurationId);
             }
-            catch (NotFoundException)
+            catch (NotFoundException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(404);
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ClientErrorException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(400);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 

@@ -33,7 +33,7 @@ namespace Presenter
         void SetImageName(string str);
         void SetPEGFontName(string str);
 
-        void CreateConfig(Configuration cfg);
+        int CreateConfig(Configuration cfg);
         void DeleteConfig(int id);
         void UpdateConfig(Configuration cfg);
         Configuration GetConfigById(int id);

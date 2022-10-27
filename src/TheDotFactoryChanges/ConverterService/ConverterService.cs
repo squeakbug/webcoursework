@@ -59,10 +59,16 @@ namespace Service
 
         public void UpdateBitmap(Bitmap bmp)
         {
+            if (bmp == null)
+                throw new ArgumentNullException("bitmap");
+
             _bmp = bmp;
         }
         public void UpdateFont(System.Drawing.Font font)
         {
+            if (font == null)
+                throw new ArgumentNullException("font");
+
             _font = font;
             FontChanged.Invoke(_font);
         }
@@ -73,20 +79,29 @@ namespace Service
 
         public void SetInputText(string str)
         {
+            if (str == null)
+                throw new ArgumentNullException("input text");
+
             _inputText = str;
         }
         public void SetPEGFontName(string str)
         {
+            if (str == null)
+                throw new ArgumentNullException("null string");
+
             _PEGFontName = str;
         }
         public void ConvertFont(bool isPeg)
         {
             if (_font == null)
-                throw new ApplicationException("Не выбран шрифт");
+                throw new ClientErrorException("font not selected");
 
             if (_inputText.Length == 0) return;
 
             Configuration cfg = GetCurrentConfig();
+            if (cfg == null)
+                throw new ClientErrorException("no current configuration");
+
             if (_tabState == TabState.Image)
             {
                 var visualizer = new ImageVisualizer(cfg);
@@ -113,6 +128,9 @@ namespace Service
 
         public void AddTextInsertion(string key, string charSet)
         {
+            if (key == null || charSet == null)
+                throw new ArgumentNullException("text insertion");
+
             _textInsertions.Add(key, charSet);
         }
         public void RemoveTextInsertion(string key)
@@ -139,16 +157,23 @@ namespace Service
             _imageName = str;
         }
 
-        public void CreateConfig(Configuration cfg)
+        public int CreateConfig(Configuration cfg)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
             int newId = cfgRepo.Create(cfg);
 
             ConfigAdded.Invoke(newId);
+
+            return newId;
         }
         public void DeleteConfig(int id)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
+            var cfg = cfgRepo.GetConfigurationById(id);
+            if (cfg == null)
+                throw new NotFoundException($"nod config with id = {id}");
+
+            cfgRepo = _repositoryFactory.CreateConfigRepository();
             cfgRepo.Delete(id);
 
             ConfigRemoved.Invoke(id);
@@ -156,6 +181,11 @@ namespace Service
         public void UpdateConfig(Configuration cfg)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
+            var dbCfg = cfgRepo.GetConfigurationById(cfg.Id);
+            if (dbCfg == null)
+                throw new NotFoundException("no cfg with such id");
+
+            cfgRepo = _repositoryFactory.CreateConfigRepository();
             cfgRepo.Update(cfg);
 
             ConfigUpdated.Invoke(cfg.Id);
@@ -172,6 +202,11 @@ namespace Service
         }
         public void SetCurrentConfig(int id)
         {
+            var cfgRepo = _repositoryFactory.CreateConfigRepository();
+            var cfg = cfgRepo.GetConfigurationById(id);
+            if (cfg == null)
+                throw new NotFoundException("current config");
+
             _curConfigId = id;
         }
         public IEnumerable<Configuration> GetConfigurations()
@@ -240,12 +275,19 @@ namespace Service
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
             var font = fontRepo.GetFontById(id);
+            if (font == null)
+                throw new NotFoundException("no font with such id");
+
             _font = new System.Drawing.Font(font.Name, font.Size);
         }
 
         public int AddFont(DataAccessInterface.Font font)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
+            var sysFont = new System.Drawing.Font(font.Name, font.Size);
+            if (sysFont.Name == "Microsoft Sans Serif" && font.Name != "Microsoft Sans Serif")
+                throw new ApplicationException("no such font in windows catalog");
+
             return fontRepo.Create(font);
         }
 
@@ -260,15 +302,26 @@ namespace Service
             var fontRepo = _repositoryFactory.CreateFontRepository();
             return fontRepo.GetFontById(id);
         }
+
         public void UpdateFont(DataAccessInterface.Font font)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
+            var tmp = fontRepo.GetFontById(font.Id);
+            if (tmp == null)
+                throw new NotFoundException("no font with such id");
+
+            fontRepo = _repositoryFactory.CreateFontRepository();
             fontRepo.Update(font);
         }
 
         public void DeleteFont(int id)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
+            var font = fontRepo.GetFontById(id);
+            if (font == null)
+                throw new NotFoundException("no font with such id");
+
+            fontRepo = _repositoryFactory.CreateFontRepository();
             fontRepo.Delete(id);
         }
 
@@ -319,6 +372,10 @@ namespace Service
             if (configs.Count == 0)
             {
                 _curConfigId = cfgRepo.Create(new Configuration());
+            }
+            else
+            {
+                _curConfigId = cfgRepo.GetFirstOrDefaultConfig().Id;
             }
         }
     }

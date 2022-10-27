@@ -53,12 +53,14 @@ namespace WebControllers.Controllers
             {
                 infos = _authService.GetUsers();
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(403);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -89,20 +91,24 @@ namespace WebControllers.Controllers
             {
                 info = _authService.GetUserById((int)userId);
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(403);
             }
-            catch (ClientErrorException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(400);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
             if (info == null)
             {
+                _logger.Log(LogLevel.Error, "resource not found");
                 return StatusCode(404);
             }
 
@@ -142,20 +148,24 @@ namespace WebControllers.Controllers
                     throw new ClientErrorException("Not supported operation");
                 }
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(403);
             }
-            catch (NotFoundException)
+            catch (NotFoundException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(404);
             }
-            catch (ClientErrorException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(400);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -191,9 +201,9 @@ namespace WebControllers.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> LogoutAsync()
         {
+
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
-
 
             return Ok();
         }
@@ -209,8 +219,9 @@ namespace WebControllers.Controllers
             {
                 newId = _authService.RegistrateUser(body.Login, body.Password, body.RepPassword);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 

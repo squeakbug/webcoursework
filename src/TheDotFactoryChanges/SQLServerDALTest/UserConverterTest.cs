@@ -1,13 +1,16 @@
-﻿using DataAccessInterface;
-using DataAccessSQLServer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlServerDALTest
+using DataAccessInterface;
+using DataAccessSQLServer;
+using NUnit.Allure.Core;
+
+namespace SQLServerDALTest
 {
+    [AllureNUnit]
     public class UserConverterTest
     {
         [Test]
@@ -33,11 +36,10 @@ namespace SqlServerDALTest
                 Password = "pass_001",
             };
             Assert.NotNull(user);
-            Assert.AreEqual(user.Id, targetUser.Id);
-            Assert.AreEqual(user.Password, targetUser.Password);
-            Assert.AreEqual(user.Login, targetUser.Login);
-            Assert.AreEqual(user.Name, targetUser.Name);
-            Assert.AreEqual(user.Loggined, targetUser.Loggined);
+            Assert.That(user.Id.Equals(targetUser.Id));
+            Assert.That(user.Login.Equals(targetUser.Login));
+            Assert.That(user.Name.Equals(targetUser.Name));
+            Assert.That(user.Password.Equals(targetUser.Password));
         }
 
         [Test]
@@ -63,11 +65,10 @@ namespace SqlServerDALTest
                 Usr_passwd = "pass_001",
             };
             Assert.NotNull(userDAL);
-            Assert.AreEqual(userDAL.Id, targetUser.Id);
-            Assert.AreEqual(userDAL.Usr_passwd, targetUser.Usr_passwd);
-            Assert.AreEqual(userDAL.Usr_login, targetUser.Usr_login);
-            Assert.AreEqual(userDAL.Usr_name, targetUser.Usr_name);
-            Assert.AreEqual(userDAL.Usr_Loggined, targetUser.Usr_Loggined);
+            Assert.That(userDAL.Id.Equals(targetUser.Id));
+            Assert.That(userDAL.Usr_Loggined.Equals(targetUser.Usr_Loggined));
+            Assert.That(userDAL.Usr_name.Equals(targetUser.Usr_name));
+            Assert.That(userDAL.Usr_passwd.Equals(targetUser.Usr_passwd));
         }
     }
 }

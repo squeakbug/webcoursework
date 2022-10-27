@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 COPY *.sln .
@@ -11,7 +11,7 @@ COPY AuthService/*.csproj ./AuthService/
 COPY AuthServiceTest/*.csproj ./AuthServiceTest/
 COPY ConverterServiceTest/*.csproj ./ConverterServiceTest/
 COPY SQLServerDALTest/*.csproj ./SQLServerDALTest/
-RUN dotnet restore
+RUN dotnet restore -r win-x64 /p:PublishReadyToRun=true
 
 COPY . .
 WORKDIR /src/WebController
@@ -19,7 +19,7 @@ RUN dotnet publish -c Release -o /app --no-restore
 
 #--use-current-runtime --self-contained false
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "WebControllers.dll"]

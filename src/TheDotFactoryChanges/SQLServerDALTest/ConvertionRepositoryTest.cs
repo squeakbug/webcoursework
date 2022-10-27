@@ -1,14 +1,16 @@
 ﻿using DataAccessSQLServer;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using NUnit.Allure.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlServerDALTest
+namespace SQLServerDALTest
 {
+    [AllureNUnit]
     public class ConvertionRepositoryTest
     {
         [Test]

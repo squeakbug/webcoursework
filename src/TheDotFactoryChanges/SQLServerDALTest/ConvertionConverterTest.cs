@@ -1,12 +1,14 @@
 ﻿using DataAccessSQLServer;
+using NUnit.Allure.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlServerDALTest
+namespace SQLServerDALTest
 {
+    [AllureNUnit]
     public class ConvertionConverterTest
     {
         [Test]
@@ -29,11 +31,12 @@ namespace SqlServerDALTest
                 Body = "body_001",
                 Name = "name_001",
             };
+
             Assert.NotNull(cvt);
-            Assert.AreEqual(targetCvt.Name, cvt.Name);
-            Assert.AreEqual(targetCvt.Id, cvt.Id);
-            Assert.AreEqual(targetCvt.Body, cvt.Body);
-            Assert.AreEqual(targetCvt.Head, cvt.Head);
+            Assert.True(cvt.Id.Equals(targetCvt.Id));
+            Assert.True(cvt.Head.Equals(targetCvt.Head));
+            Assert.True(cvt.Body.Equals(targetCvt.Body));
+            Assert.True(cvt.Name.Equals(targetCvt.Name));
         }
 
         [Test]
@@ -56,11 +59,12 @@ namespace SqlServerDALTest
                 Body = "body_001",
                 Name = "name_001",
             };
+
             Assert.NotNull(cvtDAL);
-            Assert.AreEqual(targetCvt.Name, cvtDAL.Name);
-            Assert.AreEqual(targetCvt.Id, cvtDAL.Id);
-            Assert.AreEqual(targetCvt.Body, cvtDAL.Body);
-            Assert.AreEqual(targetCvt.Head, cvtDAL.Head);
+            Assert.True(cvtDAL.Id.Equals(targetCvt.Id));
+            Assert.True(cvtDAL.Head.Equals(targetCvt.Head));
+            Assert.True(cvtDAL.Body.Equals(targetCvt.Body));
+            Assert.True(cvtDAL.Name.Equals(targetCvt.Name));
         }
     }
 }

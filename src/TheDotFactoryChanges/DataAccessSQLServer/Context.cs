@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DataAccessSQLServer
 {
-    public class Context : DbContext
+    public class Context : DbContext, IDbContext
     {
         public Context(DbContextOptions options)
             : base(options)
@@ -16,6 +16,7 @@ namespace DataAccessSQLServer
 
         public virtual IQueryable<UserInfo> GetUserInfoSet()
         {
+            base.Database.EnsureCreated();
             return UserInfo;
         }
 
@@ -32,6 +33,16 @@ namespace DataAccessSQLServer
         public virtual IQueryable<Font> GetFontSet()
         {
             return Fonts;
+        }
+
+        public void DatabaseEnsureCreated()
+        {
+            Database.EnsureCreated();
+        }
+
+        public override int SaveChanges()
+        {
+            return base.SaveChanges();
         }
     }
 }

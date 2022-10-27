@@ -4,26 +4,87 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlServerDALTest
+using Microsoft.EntityFrameworkCore;
+using Moq;
+
+using DataAccessSQLServer;
+using NUnit.Allure.Core;
+
+namespace SQLServerDALTest
 {
+    [AllureNUnit]
     public class RepositoryFactoryTest
     {
         [Test]
         public void CreateUserRepositoryTest()
         {
+            var options = SqlServerDbContextOptionsExtensions
+                .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
+                .Options;
+            var contextMock = new Mock<IDbContext>();
+            contextMock.Setup(f => f.DatabaseEnsureCreated());
+            var ctxFactoryMock = new Mock<IDbContextFactory>();
+            ctxFactoryMock.Setup(f => f.CreateContext(options))
+                          .Returns(contextMock.Object);
+            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
+            var repo = sut.CreateUserRepository();
+
+            contextMock.Verify(c => c.DatabaseEnsureCreated());
         }
 
         [Test]
         public void CreateConfigRepositoryTest()
         {
+            var options = SqlServerDbContextOptionsExtensions
+                .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
+                .Options;
+            var contextMock = new Mock<IDbContext>();
+            contextMock.Setup(f => f.DatabaseEnsureCreated());
+            var ctxFactoryMock = new Mock<IDbContextFactory>();
+            ctxFactoryMock.Setup(f => f.CreateContext(options))
+                          .Returns(contextMock.Object);
+            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
+            var repo = sut.CreateConfigRepository();
+
+            contextMock.Verify(c => c.DatabaseEnsureCreated());
         }
 
         [Test]
         public void CreateConvertionRepositoryTest()
         {
+            var options = SqlServerDbContextOptionsExtensions
+                .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
+                .Options;
+            var contextMock = new Mock<IDbContext>();
+            contextMock.Setup(f => f.DatabaseEnsureCreated());
+            var ctxFactoryMock = new Mock<IDbContextFactory>();
+            ctxFactoryMock.Setup(f => f.CreateContext(options))
+                          .Returns(contextMock.Object);
+            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
+            var repo = sut.CreateConvertionRepository();
+
+            contextMock.Verify(c => c.DatabaseEnsureCreated());
+        }
+
+        [Test]
+        public void CreateFontRepositoryTest()
+        {
+            var options = SqlServerDbContextOptionsExtensions
+                .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
+                .Options;
+            var contextMock = new Mock<IDbContext>();
+            contextMock.Setup(f => f.DatabaseEnsureCreated());
+            var ctxFactoryMock = new Mock<IDbContextFactory>();
+            ctxFactoryMock.Setup(f => f.CreateContext(options))
+                          .Returns(contextMock.Object);
+            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
+
+            var repo = sut.CreateFontRepository();
+
+            contextMock.Verify(c => c.DatabaseEnsureCreated());
         }
     }
 }

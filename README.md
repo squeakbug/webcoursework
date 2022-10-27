@@ -3,16 +3,15 @@
 
 ## Функциональные требования
 - настройка выходного представления глифов: величина отступа, порядок байтов, формат комментариев
-- автоматическая генерация набора символов: из ASCII (КОИ-8) и Unicode кодировок
 
 ## Use-case диаграмма
-![Image](docs/img/use_case.png)
+![Image](docs/img/use-case-diagram.svg)
 
 ## Черновые эскизы экранов приложения
-![Image](docs/img/auth_view.png)
-![Image](docs/img/converter_view.png)
-![Image](docs/img/settings_view.png)
-![Image](docs/img/char_generator_view.png)
+![Image](docs/img/registration_view.svg)
+![Image](docs/img/auth_view.svg)
+![Image](docs/img/converter_view.svg)
+![Image](docs/img/settings_view.svg)
 
 ## ER-диаграмма сущностей системы
-![Image](docs/img/er_system.png) 
+![Image](docs/img/er-diagram.svg) 

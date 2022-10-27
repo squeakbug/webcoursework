@@ -52,12 +52,14 @@ namespace WebControllers.Controllers
             {
                 names = _service.GetFontNames();
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
             foreach (var item in names)
                 fontNames.Add(new FontNameDTO { Name = item });
+
             return Ok(fontNames);
         }
 
@@ -74,17 +76,21 @@ namespace WebControllers.Controllers
             {
                 modelFonts = _service.GetFonts();
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
             foreach (var item in modelFonts)
+            {
                 fonts.Add(new FontDTO
                 {
                     Id = item.Id,
                     Name = item.Name,
                     Size = item.Size,
                 });
+            }
+
             return Ok(fonts);
         }
 
@@ -122,8 +128,9 @@ namespace WebControllers.Controllers
                     Size = (int)font.Size,
                 });
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
             return Ok(id.ToString());
@@ -145,8 +152,9 @@ namespace WebControllers.Controllers
                     Size = (int)font.Size,
                 });
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 
@@ -166,20 +174,24 @@ namespace WebControllers.Controllers
             {
                 _service.DeleteFont((int)fontId);
             }
-            catch (NotFoundException)
+            catch (NotFoundException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(404);
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(401);
             }
-            catch (ClientErrorException)
+            catch (ClientErrorException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(400);
             }
-            catch (ApplicationException)
+            catch (ApplicationException ex)
             {
+                _logger.Log(LogLevel.Error, ex.Message);
                 return StatusCode(500);
             }
 

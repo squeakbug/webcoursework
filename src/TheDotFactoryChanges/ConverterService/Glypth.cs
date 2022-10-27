@@ -73,11 +73,11 @@ namespace Service
         public void SetOuterRect(Rectangle rect)
         {
             if (!rect.Contains(_innerRect))
-                throw new Exception("Outer rect must be greater than inner rect");
+                throw new ApplicationException("Outer rect must be greater than inner rect");
             if (rect.X < 0)
-                throw new Exception("X coord must be positive");
+                throw new ApplicationException("X coord must be positive");
             if (rect.Y < 0)
-                throw new Exception("Y coord must be positive");
+                throw new ApplicationException("Y coord must be positive");
 
             _outerRect = rect;
             UpdateBitmap();
@@ -89,11 +89,11 @@ namespace Service
         public void SetInnerRect(Rectangle rect)
         {
             if (!_outerRect.Contains(rect))
-                throw new Exception("Outer rect must be greater than inner rect");
+                throw new ApplicationException("Outer rect must be greater than inner rect");
             if (rect.X < 0)
-                throw new Exception("X coord must be positive");
+                throw new ApplicationException("X coord must be positive");
             if (rect.Y < 0)
-                throw new Exception("Y coord must be positive");
+                throw new ApplicationException("Y coord must be positive");
 
             _innerRect = rect;
             UpdateBitmap();
@@ -138,7 +138,8 @@ namespace Service
             Graphics gfx = Graphics.FromImage(bmp);
             var backgroundBrush = new SolidBrush(_backgroundColor);
             gfx.FillRectangle(backgroundBrush, _outerRect);
-            gfx.DrawImage(_bmp, 0, 0);
+            var innerBmp = _bmp.Clone(_innerRect, _bmp.PixelFormat);
+            gfx.DrawImage(innerBmp, _innerRect.X, _innerRect.Y);
             gfx.Flush();
             _bmp = bmp;
 
@@ -166,11 +167,11 @@ namespace Service
 
         public void Add(IComponent component)
         {
-            throw new Exception("It isn't collection");
+            throw new ApplicationException("It isn't collection");
         }
         public void Remove(IComponent component)
         {
-            throw new Exception("It isn't collection");
+            throw new ApplicationException("It isn't collection");
         }
         public bool IsCollection()
         {
@@ -178,7 +179,7 @@ namespace Service
         }
         public int Count()
         {
-            throw new Exception("It isn't collection");
+            throw new ApplicationException("It isn't collection");
         }
 
         public IEnumerator GetEnumerator()

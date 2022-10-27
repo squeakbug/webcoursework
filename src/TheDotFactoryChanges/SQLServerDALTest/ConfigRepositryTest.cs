@@ -2,10 +2,12 @@ using DataAccessInterface;
 using DataAccessSQLServer;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using NUnit.Allure.Core;
 
-namespace SqlServerDALTest
+namespace SQLServerDALTest
 {
-    public class ConfigConverterTest
+    [AllureNUnit]
+    public class ConfigRepositoryTest
     {
         [Test]
         public void CreateConfigTest()

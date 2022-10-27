@@ -86,7 +86,6 @@ namespace Service
         {
             return _outerRectangle;
         }
-        // TODO: изменять соответственно offsets
         public void SetOuterRect(Rectangle rect)
         {
             _outerRectangle = rect;
@@ -144,7 +143,7 @@ namespace Service
         }
         public void Remove(IComponent component)
         {
-            throw new NotImplementedException();
+            _glypths.Remove(component);
         }
         public bool IsCollection()
         {

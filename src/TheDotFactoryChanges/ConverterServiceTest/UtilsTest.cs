@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Drawing;
 
 using Service;
+using NUnit.Allure.Core;
 
 namespace ConverterServiceTest
 {
+    [AllureNUnit]
     public class UtilsTest
     {
         [Test]
@@ -63,13 +65,23 @@ namespace ConverterServiceTest
         [Test]
         public void CharacterRangePointParseTest()
         {
+            string вход = "0x100";
 
+            int выход = 0;
+            var b = Utils.CharacterRangePointParse(вход, ref выход);
+
+            int нужный_выход = 256;
+            Assert.AreEqual(нужный_выход, выход);
         }
 
         [Test]
         public void ExpandAndRemoveCharacterRangesTest()
         {
+            var input = "abcd";
 
+            var res = Utils.ExpandAndRemoveCharacterRanges(input);
+
+            Assert.AreEqual("abcd", res);
         }
     }
 }

@@ -10,9 +10,9 @@ namespace DataAccessSQLServer
 {
     public class FontRepository : IFontRepository
     {
-        Context _ctx;
+        IDbContext _ctx;
 
-        public FontRepository(Context ctx)
+        public FontRepository(IDbContext ctx)
         {
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
@@ -32,9 +32,10 @@ namespace DataAccessSQLServer
         }
         public int Create(DataAccessInterface.Font font)
         {
-            _ctx.Fonts.Add(FontConverter.MapFromBusinessEntity(font));
+            var dbFont = FontConverter.MapFromBusinessEntity(font);
+            _ctx.Fonts.Add(dbFont);
             _ctx.SaveChanges();
-            return font.Id;
+            return dbFont.Id;
         }
         public void Update(DataAccessInterface.Font font)
         {

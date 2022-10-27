@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 using DataAccessSQLServer;
 using DataAccessInterface;
+using NUnit.Allure.Core;
 
 // https://learn.microsoft.com/ru-ru/ef/ef6/fundamentals/testing/mocking
 
-namespace SqlServerDALTest
+namespace SQLServerDALTest
 {
+    [AllureNUnit]
     public class UserRepositoryTest
     {
         [Test]
@@ -52,7 +54,7 @@ namespace SqlServerDALTest
             userSetMock.Setup(set =>
                 set.UserInfo.Find(It.IsAny<int>()))
                        .Returns(new DataAccessSQLServer.UserInfo
-                            { Id = user.Id, Loggined = user.Loggined,
+                            { Id = user.Id, Usr_Loggined = user.Loggined,
                               Usr_login = user.Login, Usr_name = user.Name,
                               Usr_passwd = user.Password });
             var sut = new UserRepository(userSetMock.Object);
@@ -137,7 +139,7 @@ namespace SqlServerDALTest
                        .Returns(new DataAccessSQLServer.UserInfo
                        {
                            Id = user.Id,
-                           Loggined = user.Loggined,
+                           Usr_Loggined = user.Loggined,
                            Usr_login = user.Login,
                            Usr_name = user.Name,
                            Usr_passwd = user.Password
@@ -159,7 +161,7 @@ namespace SqlServerDALTest
                 new DataAccessSQLServer.UserInfo
                 {
                     Id = 1,
-                    Loggined = false,
+                    Usr_Loggined = false,
                     Usr_login = "user_001",
                     Usr_name = "user_001",
                     Usr_passwd = "pass",
@@ -167,7 +169,7 @@ namespace SqlServerDALTest
                 new DataAccessSQLServer.UserInfo
                 {
                     Id = 2,
-                    Loggined = false,
+                    Usr_Loggined = false,
                     Usr_login = "user_002",
                     Usr_name = "user_002",
                     Usr_passwd = "pass",
@@ -175,7 +177,7 @@ namespace SqlServerDALTest
                 new DataAccessSQLServer.UserInfo
                 {
                     Id = 3,
-                    Loggined = false,
+                    Usr_Loggined = false,
                     Usr_login = "user_003",
                     Usr_name = "user_003",
                     Usr_passwd = "pass",

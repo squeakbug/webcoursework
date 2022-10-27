@@ -8,9 +8,9 @@ namespace DataAccessSQLServer
 {
     public class UserRepository : IUserRepository
     {
-        Context _ctx;
+        IDbContext _ctx;
 
-        public UserRepository(Context ctx)
+        public UserRepository(IDbContext ctx)
         {
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }

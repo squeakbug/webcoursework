@@ -21,6 +21,8 @@ using Presenter;
 using DataAccessInterface;
 using DataAccessSQLServer;
 using AuthService;
+using Microsoft.AspNetCore.Http;
+using System.Security.Authentication;
 
 namespace WebController
 {
@@ -49,13 +51,13 @@ namespace WebController
             // Swashbuckle
             services.AddSwaggerGen();
 
-            //services.AddScoped<IHomeControllerController, HomeControllerImplementation>();
-            services.AddScoped<IConverterService, ConverterService>();
-            services.AddScoped<IAuthService, AuthService.AuthService>();
+            services.AddSingleton<IConverterService, ConverterService>();
+            services.AddSingleton<IAuthService, AuthService.AuthService>();
             services.AddSingleton<ITextRenderer>(new WinFormsTextRendererAdapter());
             services.AddSingleton<IRepositoryFactory>(new DataAccessSQLServer.RepositoryFactory
             (
-                "192.168.10.103",
+                new DbContextFactory(),
+                "192.168.10.104",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"

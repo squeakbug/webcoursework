@@ -9,9 +9,9 @@ namespace DataAccessSQLServer
 {
     public class ConvertionRepository : IConvertionRepository
     {
-        Context _ctx;
+        IDbContext _ctx;
 
-        public ConvertionRepository(Context ctx)
+        public ConvertionRepository(IDbContext ctx)
         {
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
@@ -31,9 +31,10 @@ namespace DataAccessSQLServer
         }
         public int Create(DataAccessInterface.Convertion cvt)
         {
-            _ctx.Convertions.Add(ConvertionConverter.MapFromBusinessEntity(cvt));
+            var dbCvt = ConvertionConverter.MapFromBusinessEntity(cvt);
+            _ctx.Convertions.Add(dbCvt);
             _ctx.SaveChanges();
-            return cvt.Id;
+            return dbCvt.Id;
         }
         public void Update(DataAccessInterface.Convertion cvt)
         {

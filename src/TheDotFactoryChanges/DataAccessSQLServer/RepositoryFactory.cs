@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using DataAccessInterface;
+using System;
 
 namespace DataAccessSQLServer
 {
@@ -11,6 +12,8 @@ namespace DataAccessSQLServer
         public string InitialCatalog { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+
+        private IDbContextFactory _dbContextFactory;
 
         public string ConnectionString
         {
@@ -27,12 +30,14 @@ namespace DataAccessSQLServer
             }
         }
 
-        public RepositoryFactory(string dataSource, string initialCatalog, string user, string passwd)
+        public RepositoryFactory(IDbContextFactory factory, string dataSource, string initialCatalog, string user, string passwd)
         {
             DataSource = dataSource;
             InitialCatalog = initialCatalog;
             User = user;
             Password = passwd;
+
+            _dbContextFactory = factory ?? throw new ArgumentNullException("db context factory");
         }
 
         public IUserRepository CreateUserRepository()
@@ -40,8 +45,8 @@ namespace DataAccessSQLServer
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), ConnectionString)
                 .Options;
-            var globalCtx = new Context(options);
-            globalCtx.Database.EnsureCreated();
+            var globalCtx = _dbContextFactory.CreateContext(options);
+            globalCtx.DatabaseEnsureCreated();
             return new UserRepository(globalCtx);
         }
         public IConfigRepository CreateConfigRepository()
@@ -49,8 +54,8 @@ namespace DataAccessSQLServer
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), ConnectionString)
                 .Options;
-            var globalCtx = new Context(options);
-            globalCtx.Database.EnsureCreated();
+            var globalCtx = _dbContextFactory.CreateContext(options);
+            globalCtx.DatabaseEnsureCreated();
             return new ConfigRepository(globalCtx);
         }
 
@@ -59,8 +64,8 @@ namespace DataAccessSQLServer
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), ConnectionString)
                 .Options;
-            var globalCtx = new Context(options);
-            globalCtx.Database.EnsureCreated();
+            var globalCtx = _dbContextFactory.CreateContext(options);
+            globalCtx.DatabaseEnsureCreated();
             return new ConvertionRepository(globalCtx);
         }
 
@@ -69,8 +74,8 @@ namespace DataAccessSQLServer
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), ConnectionString)
                 .Options;
-            var globalCtx = new Context(options);
-            globalCtx.Database.EnsureCreated();
+            var globalCtx = _dbContextFactory.CreateContext(options);
+            globalCtx.DatabaseEnsureCreated();
             return new FontRepository(globalCtx);
         }
     }

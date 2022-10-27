@@ -461,7 +461,7 @@ paths:
   /convertionsNames:
     get:
       tags:
-        - configuration
+        - convertion
       summary: Get convertion names
       description: Get convertion names
       responses:
@@ -480,7 +480,7 @@ paths:
   /convertions:
     get:
       tags:
-        - configuration
+        - convertion
       summary: Get convertions
       description: Get convertions
       responses:
@@ -496,10 +496,34 @@ paths:
           description: User is not authorized
         '500':
           description: Server error
+    post:
+      tags:
+        - convertion
+      summary: Save convertion
+      description: Save convertion
+      requestBody:
+        description: Convertion
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveConvertionRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveConvertionResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: User is not authorized
+        '500':
+          description: Server error
   /convertions/{convertionId}:
     get:
       tags:
-        - configuration
+        - convertion
       summary: Get convertion by id
       description: Get convertion by id
       parameters:
@@ -522,18 +546,30 @@ paths:
           description: User is not authorized
         '500':
           description: Server error
-  /convertions/doConvertion/fromTemplate:
-    post:
+  /convertions/from-template:
+    get:
       tags:
-        - configuration
+        - convertion
       summary: Make convertion
       description: Make convertion
-      requestBody:
-        description: Input for convertion
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DoConvertionFromTemplateRequest'
+      parameters:
+        - name: fontId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: configId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: template
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
@@ -541,31 +577,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DoConvertionResponse'
-        '400':
-          description: Bad request
-        '401':
-          description: User is not authorized
-        '500':
-          description: Server error
-  /convertions/saveConvertion:
-    post:
-      tags:
-        - configuration
-      summary: Save convertion
-      description: Save convertion
-      requestBody:
-        description: Convertion
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SaveConvertionRequest'
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SaveConvertionResponse'
         '400':
           description: Bad request
         '401':
@@ -821,24 +832,6 @@ components:
           type: string
           example: string
         body:
-          type: string
-          example: string
-    DoConvertionFromTemplateRequest:
-      required:
-        - fontIndex
-        - configIndex
-        - template
-      type: object
-      properties:
-        fontIndex:
-          type: integer
-          format: int32
-          example: 10
-        configIndex:
-          type: integer
-          format: int32
-          example: 10
-        template:
           type: string
           example: string
     DoConvertionResponse:
