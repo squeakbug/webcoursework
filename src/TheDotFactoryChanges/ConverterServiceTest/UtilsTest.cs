@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-using Service;
 using NUnit.Allure.Core;
+using NUnit.Framework;
+
+using Service;
 
 namespace ConverterServiceTest
 {

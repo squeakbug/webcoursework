@@ -1,11 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Moq;
 using Microsoft.EntityFrameworkCore;
+using NUnit.Allure.Core;
+using NUnit.Framework;
 
 using DataAccessSQLServer;
 using DataAccessInterface;
-using NUnit.Allure.Core;
+
 
 // https://learn.microsoft.com/ru-ru/ef/ef6/fundamentals/testing/mocking
 
@@ -27,7 +32,7 @@ namespace SQLServerDALTest
             userSetMock.Setup(set =>
                 set.UserInfo.Add(It.IsAny<DataAccessSQLServer.UserInfo>()));
             userSetMock.Setup(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
             var sut = new UserRepository(userSetMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
 
@@ -37,11 +42,11 @@ namespace SQLServerDALTest
                 set.UserInfo.Add(It.Is<DataAccessSQLServer.UserInfo>(info =>
                     info.Usr_login == user.Login)));
             userSetMock.Verify(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
         }
 
         [Test]
-        public void GetUserByIdTest()
+        public async Task GetUserByIdTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -51,18 +56,23 @@ namespace SQLServerDALTest
             var user = GetUnlogginedUserInfoSample()[0];
             userSetMock.Setup(u => u.UserInfo)
                        .Returns(userDbSetMock.Object);
+            var userInfoSample = new DataAccessSQLServer.UserInfo
+            {
+                Id = user.Id,
+                Usr_Loggined = user.Loggined,
+                Usr_login = user.Login,
+                Usr_name = user.Name,
+                Usr_passwd = user.Password
+            };
             userSetMock.Setup(set =>
-                set.UserInfo.Find(It.IsAny<int>()))
-                       .Returns(new DataAccessSQLServer.UserInfo
-                            { Id = user.Id, Usr_Loggined = user.Loggined,
-                              Usr_login = user.Login, Usr_name = user.Name,
-                              Usr_passwd = user.Password });
+                set.UserInfo.FindAsync(It.IsAny<int>()))
+                       .ReturnsAsync(userInfoSample);
             var sut = new UserRepository(userSetMock.Object);
 
-            var retUser = sut.GetUserById(user.Id);
+            var retUser = await sut.GetUserById(user.Id);
 
             userSetMock.Verify(set =>
-                set.UserInfo.Find(It.Is<int>(id =>
+                set.UserInfo.FindAsync(It.Is<int>(id =>
                     id == user.Id)));
         }
 
@@ -134,16 +144,17 @@ namespace SQLServerDALTest
             var user = GetUnlogginedUserInfoSample()[0];
             userSetMock.Setup(u => u.UserInfo)
                        .Returns(userDbSetMock.Object);
+            var userInfoSample = new DataAccessSQLServer.UserInfo
+            {
+                Id = user.Id,
+                Usr_Loggined = user.Loggined,
+                Usr_login = user.Login,
+                Usr_name = user.Name,
+                Usr_passwd = user.Password
+            };
             userSetMock.Setup(set =>
-                set.UserInfo.Find(It.IsAny<int>()))
-                       .Returns(new DataAccessSQLServer.UserInfo
-                       {
-                           Id = user.Id,
-                           Usr_Loggined = user.Loggined,
-                           Usr_login = user.Login,
-                           Usr_name = user.Name,
-                           Usr_passwd = user.Password
-                       });
+                set.UserInfo.FindAsync(It.IsAny<int>()))
+                       .ReturnsAsync(userInfoSample);
             userSetMock.Setup(set =>
                 set.UserInfo.Remove(It.IsAny<DataAccessSQLServer.UserInfo>()));
             var sut = new UserRepository(userSetMock.Object);

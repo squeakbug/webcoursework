@@ -70,7 +70,7 @@ namespace Service
                 throw new ArgumentNullException("font");
 
             _font = font;
-            FontChanged.Invoke(_font);
+            FontChanged?.Invoke(_font);
         }
         public void UpdateTabState(TabState state)
         {
@@ -91,14 +91,14 @@ namespace Service
 
             _PEGFontName = str;
         }
-        public void ConvertFont(bool isPeg)
+        public async Task ConvertFont(bool isPeg)
         {
             if (_font == null)
                 throw new ClientErrorException("font not selected");
 
             if (_inputText.Length == 0) return;
 
-            Configuration cfg = GetCurrentConfig();
+            Configuration cfg = await GetCurrentConfig();
             if (cfg == null)
                 throw new ClientErrorException("no current configuration");
 
@@ -121,8 +121,8 @@ namespace Service
                     visualizer.GetDump(_font, _inputText, out _outputSourceText, out _outputHeaderText, _textRenderer);
                 }
 
-                OutputSourceTextChanged.Invoke(_outputSourceText);
-                OutputHeaderTextChanged.Invoke(_outputHeaderText);
+                OutputSourceTextChanged?.Invoke(_outputSourceText);
+                OutputHeaderTextChanged?.Invoke(_outputHeaderText);
             }
         }
 
@@ -157,72 +157,72 @@ namespace Service
             _imageName = str;
         }
 
-        public int CreateConfig(Configuration cfg)
+        public async Task<int> CreateConfig(Configuration cfg)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            int newId = cfgRepo.Create(cfg);
+            int newId = await cfgRepo.Create(cfg);
 
-            ConfigAdded.Invoke(newId);
+            ConfigAdded?.Invoke(newId);
 
             return newId;
         }
-        public void DeleteConfig(int id)
+        public async Task DeleteConfig(int id)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            var cfg = cfgRepo.GetConfigurationById(id);
+            var cfg = await cfgRepo.GetConfigurationById(id);
             if (cfg == null)
                 throw new NotFoundException($"nod config with id = {id}");
 
             cfgRepo = _repositoryFactory.CreateConfigRepository();
-            cfgRepo.Delete(id);
+            await cfgRepo.Delete(id);
 
-            ConfigRemoved.Invoke(id);
+            ConfigRemoved?.Invoke(id);
         }
-        public void UpdateConfig(Configuration cfg)
+        public async Task UpdateConfig(Configuration cfg)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            var dbCfg = cfgRepo.GetConfigurationById(cfg.Id);
+            var dbCfg = await cfgRepo.GetConfigurationById(cfg.Id);
             if (dbCfg == null)
                 throw new NotFoundException("no cfg with such id");
 
             cfgRepo = _repositoryFactory.CreateConfigRepository();
-            cfgRepo.Update(cfg);
+            await cfgRepo.Update(cfg);
 
-            ConfigUpdated.Invoke(cfg.Id);
+            ConfigUpdated?.Invoke(cfg.Id);
         }
-        public Configuration GetConfigById(int id)
+        public async Task<Configuration> GetConfigById(int id)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            return cfgRepo.GetConfigurationById(id);
+            return await cfgRepo.GetConfigurationById(id);
         }
-        public Configuration GetCurrentConfig()
+        public async Task<Configuration> GetCurrentConfig()
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            return cfgRepo.GetConfigurationById(_curConfigId);
+            return await cfgRepo.GetConfigurationById(_curConfigId);
         }
-        public void SetCurrentConfig(int id)
+        public async Task SetCurrentConfig(int id)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            var cfg = cfgRepo.GetConfigurationById(id);
+            var cfg = await cfgRepo.GetConfigurationById(id);
             if (cfg == null)
                 throw new NotFoundException("current config");
 
             _curConfigId = id;
         }
-        public IEnumerable<Configuration> GetConfigurations()
+        public async Task<IEnumerable<Configuration>> GetConfigurations()
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            return cfgRepo.GetConfigurations();
+            return await cfgRepo.GetConfigurations();
         }
-        public void UpdateConfigurations(IEnumerable<Configuration> cfgs)
+        public async Task UpdateConfigurations(IEnumerable<Configuration> cfgs)
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
             foreach (var cfg in cfgs)
             {
-                cfgRepo.Update(cfg);
+                await cfgRepo.Update(cfg);
             }
 
-            ConfigsUpdated.Invoke();
+            ConfigsUpdated?.Invoke();
         }
         public Bitmap GetCurrentBitmap()
         {
@@ -233,32 +233,32 @@ namespace Service
             return _font;
         }
 
-        public IEnumerable<string> GetFontNames()
+        public async Task<IEnumerable<string>> GetFontNames()
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            var fonts = fontRepo.GetFonts();
+            var fonts = await fontRepo.GetFonts();
             var fontNames = new List<string>();
             foreach (var item in fonts)
                 fontNames.Add(item.Name);
             return fontNames;
         }
 
-        public IEnumerable<Convertion> GetConvertions()
+        public async Task<IEnumerable<Convertion>> GetConvertions()
         {
             var cvtRepo = _repositoryFactory.CreateConvertionRepository();
-            return cvtRepo.GetConvertions();
+            return await cvtRepo.GetConvertions();
         }
 
-        public Convertion GetConvertionById(int id)
+        public async Task<Convertion> GetConvertionById(int id)
         {
             var cvtRepo = _repositoryFactory.CreateConvertionRepository();
-            return cvtRepo.GetConvertionById(id);
+            return await cvtRepo.GetConvertionById(id);
         }
 
-        public int AddConvertion(Convertion cvt)
+        public async Task<int> AddConvertion(Convertion cvt)
         {
             var cvtRepo = _repositoryFactory.CreateConvertionRepository();
-            return cvtRepo.Create(cvt);
+            return await cvtRepo.Create(cvt);
         }
 
         public string GetOutputSourceText()
@@ -271,58 +271,58 @@ namespace Service
             return _outputHeaderText;
         }
 
-        public void SetCurrentFont(int id)
+        public async Task SetCurrentFont(int id)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            var font = fontRepo.GetFontById(id);
+            var font = await fontRepo.GetFontById(id);
             if (font == null)
                 throw new NotFoundException("no font with such id");
 
             _font = new System.Drawing.Font(font.Name, font.Size);
         }
 
-        public int AddFont(DataAccessInterface.Font font)
+        public async Task<int> AddFont(DataAccessInterface.Font font)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
             var sysFont = new System.Drawing.Font(font.Name, font.Size);
             if (sysFont.Name == "Microsoft Sans Serif" && font.Name != "Microsoft Sans Serif")
                 throw new ApplicationException("no such font in windows catalog");
 
-            return fontRepo.Create(font);
+            return await fontRepo.Create(font);
         }
 
-        public IEnumerable<DataAccessInterface.Font> GetFonts()
+        public async Task<IEnumerable<DataAccessInterface.Font>> GetFonts()
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            return fontRepo.GetFonts();
+            return await fontRepo.GetFonts();
         }
 
-        public DataAccessInterface.Font GetFontById(int id)
+        public async Task<DataAccessInterface.Font> GetFontById(int id)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            return fontRepo.GetFontById(id);
+            return await fontRepo.GetFontById(id);
         }
 
-        public void UpdateFont(DataAccessInterface.Font font)
+        public async Task UpdateFont(DataAccessInterface.Font font)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            var tmp = fontRepo.GetFontById(font.Id);
+            var tmp = await fontRepo.GetFontById(font.Id);
             if (tmp == null)
                 throw new NotFoundException("no font with such id");
 
             fontRepo = _repositoryFactory.CreateFontRepository();
-            fontRepo.Update(font);
+            await fontRepo.Update(font);
         }
 
-        public void DeleteFont(int id)
+        public async Task DeleteFont(int id)
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
-            var font = fontRepo.GetFontById(id);
+            var font = await fontRepo.GetFontById(id);
             if (font == null)
                 throw new NotFoundException("no font with such id");
 
             fontRepo = _repositoryFactory.CreateFontRepository();
-            fontRepo.Delete(id);
+            await fontRepo.Delete(id);
         }
 
         // === private ===
@@ -364,14 +364,14 @@ namespace Service
 
             _curTextInsertion = "All";
         }
-        private void SetupConfiguration()
+        private async Task SetupConfiguration()
         {
             var cfgRepo = _repositoryFactory.CreateConfigRepository();
-            var configs = new List<Configuration>(cfgRepo.GetConfigurations());
+            var configs = new List<Configuration>(await cfgRepo.GetConfigurations());
             _curConfigId = -1;
             if (configs.Count == 0)
             {
-                _curConfigId = cfgRepo.Create(new Configuration());
+                _curConfigId = await cfgRepo.Create(new Configuration());
             }
             else
             {

@@ -28,14 +28,6 @@ namespace WebControllers.Controllers
             _service = service ?? throw new ArgumentNullException("bad service");
             _authService = authService ?? throw new ArgumentNullException("bad auth service");
             _logger = logger ?? throw new ArgumentNullException("bad logger");
-
-            _service.OutputSourceTextChanged += (text) => { };
-            _service.OutputHeaderTextChanged += (text) => { };
-            _service.FontChanged += (font) => { };
-            _service.ConfigRemoved += (id) => { };
-            _service.ConfigAdded += (id) => { };
-            _service.ConfigUpdated += (id) => { };
-            _service.ConfigsUpdated += () => { };
         }
 
         [Authorize]
@@ -49,7 +41,7 @@ namespace WebControllers.Controllers
             IEnumerable<Configuration> configs;
             try
             {
-                configs = _service.GetConfigurations();
+                configs = await Task.Run(() => _service.GetConfigurations());
             }
             catch (ApplicationException ex)
             {
@@ -72,7 +64,7 @@ namespace WebControllers.Controllers
             IEnumerable<Configuration> configs;
             try
             {
-                configs = _service.GetConfigurations();
+                configs = await Task.Run(() => _service.GetConfigurations());
             }
             catch (ApplicationException)
             {
@@ -105,7 +97,7 @@ namespace WebControllers.Controllers
             {
                 try
                 {
-                    _service.CreateConfig(ConfigFromConfigDTO(item));
+                    await Task.Run(() => _service.CreateConfig(ConfigFromConfigDTO(item)));
                 }
                 catch (ApplicationException ex)
                 {
@@ -125,7 +117,7 @@ namespace WebControllers.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ConfigurationsGET(long configurationId)
         {
-            return Ok(ConfigToConfigDTO(_service.GetConfigById((int)configurationId)));
+            return Ok(ConfigToConfigDTO(await Task.Run(() => _service.GetConfigById((int)configurationId))));
         }
 
         [Authorize]
@@ -140,7 +132,7 @@ namespace WebControllers.Controllers
         {
             try
             {
-                _service.UpdateConfig(ConfigFromConfigDTO(body));
+                await Task.Run(() => _service.UpdateConfig(ConfigFromConfigDTO(body)));
             }
             catch (ApplicationException ex)
             {
@@ -169,7 +161,7 @@ namespace WebControllers.Controllers
         {
             try
             {
-                _service.DeleteConfig((int)configurationId);
+                await Task.Run(() => _service.DeleteConfig((int)configurationId));
             }
             catch (NotFoundException ex)
             {

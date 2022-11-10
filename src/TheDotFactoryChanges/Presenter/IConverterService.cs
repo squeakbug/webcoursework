@@ -21,7 +21,7 @@ namespace Presenter
         void UpdateTabState(TabState state);
         void SetInputText(string str);
 
-        void ConvertFont(bool isPeg);
+        Task ConvertFont(bool isPeg);
         event Action<string> OutputSourceTextChanged;
         event Action<string> OutputHeaderTextChanged;
 
@@ -33,31 +33,31 @@ namespace Presenter
         void SetImageName(string str);
         void SetPEGFontName(string str);
 
-        int CreateConfig(Configuration cfg);
-        void DeleteConfig(int id);
-        void UpdateConfig(Configuration cfg);
-        Configuration GetConfigById(int id);
-        Configuration GetCurrentConfig();
-        void SetCurrentConfig(int id);
-        IEnumerable<Configuration> GetConfigurations();
-        void UpdateConfigurations(IEnumerable<Configuration> cfgs);
+        Task<int> CreateConfig(Configuration cfg);
+        Task DeleteConfig(int id);
+        Task UpdateConfig(Configuration cfg);
+        Task<Configuration> GetConfigById(int id);
+        Task<Configuration> GetCurrentConfig();
+        Task SetCurrentConfig(int id);
+        Task<IEnumerable<Configuration>> GetConfigurations();
+        Task UpdateConfigurations(IEnumerable<Configuration> cfgs);
         event Action<int> ConfigRemoved;
         event Action<int> ConfigAdded;
         event Action<int> ConfigUpdated;
         event Action ConfigsUpdated;
 
-        IEnumerable<string> GetFontNames();
-        IEnumerable<Convertion> GetConvertions();
-        Convertion GetConvertionById(int id);
-        int AddConvertion(Convertion cvt);
+        Task<IEnumerable<string>> GetFontNames();
+        Task<IEnumerable<Convertion>> GetConvertions();
+        Task<Convertion> GetConvertionById(int id);
+        Task<int> AddConvertion(Convertion cvt);
         string GetOutputSourceText();
         string GetOutputHeaderText();
 
-        void SetCurrentFont(int id);
-        int AddFont(DataAccessInterface.Font font);
-        IEnumerable<DataAccessInterface.Font> GetFonts();
-        DataAccessInterface.Font GetFontById(int id);
-        void UpdateFont(DataAccessInterface.Font font);
-        void DeleteFont(int id);
+        Task SetCurrentFont(int id);
+        Task<int> AddFont(DataAccessInterface.Font font);
+        Task<IEnumerable<DataAccessInterface.Font>> GetFonts();
+        Task<DataAccessInterface.Font> GetFontById(int id);
+        Task UpdateFont(DataAccessInterface.Font font);
+        Task DeleteFont(int id);
     }
 }

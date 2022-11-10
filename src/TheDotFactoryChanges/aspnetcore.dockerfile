@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-windowsservercore-ltsc2022 AS build
 WORKDIR /src
 
 COPY *.sln .
@@ -15,11 +15,11 @@ RUN dotnet restore -r win-x64 /p:PublishReadyToRun=true
 
 COPY . .
 WORKDIR /src/WebController
-RUN dotnet publish -c Release -o /app --no-restore
+RUN dotnet publish -c Release -o /app -r win-x64 --self-contained false --no-restore
 
 #--use-current-runtime --self-contained false
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-windowsservercore-ltsc2022 AS runtime
 WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "WebControllers.dll"]

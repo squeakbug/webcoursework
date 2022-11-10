@@ -17,7 +17,7 @@ namespace DataAccessSQLServer
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
 
-        public IEnumerable<DataAccessInterface.Font> GetFonts()
+        public async Task<IEnumerable<DataAccessInterface.Font>> GetFonts()
         {
             var result = new List<DataAccessInterface.Font>();
             IQueryable<DataAccessSQLServer.Font> fonts = _ctx.GetFontSet();
@@ -25,31 +25,52 @@ namespace DataAccessSQLServer
                 result.Add(FontConverter.MapToBusinessEntity(font));
             return result;
         }
-        public DataAccessInterface.Font GetFontById(int id)
+        public async Task<DataAccessInterface.Font> GetFontById(int id)
         {
-            var font = _ctx.Fonts.Find(id);
+            var font = await _ctx.Fonts.FindAsync(id);
             return font == null ? null : FontConverter.MapToBusinessEntity(font);
         }
-        public int Create(DataAccessInterface.Font font)
+        public async Task<int> Create(DataAccessInterface.Font font)
         {
             var dbFont = FontConverter.MapFromBusinessEntity(font);
             _ctx.Fonts.Add(dbFont);
-            _ctx.SaveChanges();
+            try
+            {
+                await _ctx.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new ApplicationException("save changes");
+            }
             return dbFont.Id;
         }
-        public void Update(DataAccessInterface.Font font)
+        public async Task Update(DataAccessInterface.Font font)
         {
             _ctx.Fonts.Update(FontConverter.MapFromBusinessEntity(font));
-            _ctx.SaveChanges();
+            try
+            {
+                await _ctx.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new ApplicationException("save changes");
+            }
         }
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             var font = _ctx.Fonts.Find(id);
             if (font == null)
                 throw new Exception("No font with such id");
 
             _ctx.Fonts.Remove(font);
-            _ctx.SaveChanges();
+            try
+            {
+                await _ctx.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new ApplicationException("save changes");
+            }
         }
     }
 }

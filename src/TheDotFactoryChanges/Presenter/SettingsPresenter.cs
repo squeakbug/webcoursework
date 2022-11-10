@@ -506,9 +506,9 @@ namespace Presenter
             View.SetMingHeightText(cfg.minHeight.ToString());
        }
 
-        private void SyncWithModel()
+        private async void SyncWithModel()
         {
-            _configurations = new List<Configuration>(_service.GetConfigurations());
+            _configurations = new List<Configuration>(await _service.GetConfigurations());
             int curCfgId = _service.GetCurrentConfig().Id;
             _curCfgIndx = _configurations.FindIndex((x) => x.Id == curCfgId);
         }

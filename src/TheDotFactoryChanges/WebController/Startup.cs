@@ -51,13 +51,13 @@ namespace WebController
             // Swashbuckle
             services.AddSwaggerGen();
 
-            services.AddSingleton<IConverterService, ConverterService>();
-            services.AddSingleton<IAuthService, AuthService.AuthService>();
+            services.AddTransient<IConverterService, ConverterService>();
+            services.AddTransient<IAuthService, AuthService.AuthService>();
             services.AddSingleton<ITextRenderer>(new WinFormsTextRendererAdapter());
             services.AddSingleton<IRepositoryFactory>(new DataAccessSQLServer.RepositoryFactory
             (
                 new DbContextFactory(),
-                "192.168.10.104",
+                "172.16.88.14",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"

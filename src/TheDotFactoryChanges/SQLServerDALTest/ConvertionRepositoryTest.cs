@@ -1,12 +1,15 @@
-﻿using DataAccessSQLServer;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using NUnit.Allure.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+using Moq;
+using NUnit.Allure.Core;
+using NUnit.Framework;
+
+using DataAccessSQLServer;
 
 namespace SQLServerDALTest
 {
@@ -26,7 +29,7 @@ namespace SQLServerDALTest
             cvtSetMock.Setup(set =>
                 set.Convertions.Add(It.IsAny<DataAccessSQLServer.Convertion>()));
             cvtSetMock.Setup(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
             var sut = new ConvertionRepository(cvtSetMock.Object);
             var cvt = GetConvertionSample()[0];
 
@@ -36,11 +39,11 @@ namespace SQLServerDALTest
                 set.Convertions.Add(It.Is<DataAccessSQLServer.Convertion>(cvt =>
                     cvt.Name == cvt.Name)));
             cvtSetMock.Verify(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
         }
 
         [Test]
-        public void GetConvertionByIdTest()
+        public async Task GetConvertionByIdTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -51,19 +54,19 @@ namespace SQLServerDALTest
             cvtSetMock.Setup(c => c.Convertions)
                        .Returns(cvtDbSetMock.Object);
             cvtSetMock.Setup(set =>
-                set.Convertions.Find(It.IsAny<int>()))
-                       .Returns(cvt);
+                set.Convertions.FindAsync(It.IsAny<int>()))
+                       .ReturnsAsync(cvt);
             var sut = new ConvertionRepository(cvtSetMock.Object);
 
-            var retCvt = sut.GetConvertionById(cvt.Id);
+            var retCvt = await sut.GetConvertionById(cvt.Id);
 
             cvtSetMock.Verify(set =>
-                set.Convertions.Find(It.Is<int>(id =>
+                set.Convertions.FindAsync(It.Is<int>(id =>
                     id == cvt.Id)));
         }
 
         [Test]
-        public void GetConvertionsTest()
+        public async Task GetConvertionsTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -77,7 +80,7 @@ namespace SQLServerDALTest
                        .Returns(cvts.AsQueryable());
             var sut = new ConvertionRepository(cvtSetMock.Object);
 
-            var retCvts = sut.GetConvertions();
+            var retCvts = await sut.GetConvertions();
 
             cvtSetMock.Verify(set => set.GetConvertionSet());
             Assert.NotNull(retCvts);

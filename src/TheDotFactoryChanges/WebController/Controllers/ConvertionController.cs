@@ -29,14 +29,6 @@ namespace WebControllers.Controllers
             _service = service ?? throw new ArgumentNullException("bad service");
             _authService = authService ?? throw new ArgumentNullException("bad auth service");
             _logger = logger ?? throw new ArgumentNullException("bad logger");
-
-            _service.OutputSourceTextChanged += (text) => { };
-            _service.OutputHeaderTextChanged += (text) => { };
-            _service.FontChanged += (font) => { };
-            _service.ConfigRemoved += (id) => { };
-            _service.ConfigAdded += (id) => { };
-            _service.ConfigUpdated += (id) => { };
-            _service.ConfigsUpdated += () => { };
         }
 
         [Authorize]
@@ -50,7 +42,7 @@ namespace WebControllers.Controllers
             IEnumerable<Convertion> convertions;
             try
             {
-                convertions = _service.GetConvertions();
+                convertions = await Task.Run(() => _service.GetConvertions());
             }
             catch (NotAuthorizedException ex)
             {
@@ -93,7 +85,7 @@ namespace WebControllers.Controllers
             IEnumerable<Convertion> convertions;
             try
             {
-                convertions = _service.GetConvertions();
+                convertions = await Task.Run(() => _service.GetConvertions());
             }
             catch (NotAuthorizedException ex)
             {
@@ -138,7 +130,7 @@ namespace WebControllers.Controllers
             Convertion convertion;
             try
             {
-                convertion = _service.GetConvertionById(convertionId);
+                convertion = await Task.Run(() => _service.GetConvertionById(convertionId));
             }
             catch (NotAuthorizedException ex)
             {
@@ -178,10 +170,10 @@ namespace WebControllers.Controllers
             string source, header;
             try
             {
-                _service.SetCurrentConfig(configId);
-                _service.SetCurrentFont(fontId);
+                await Task.Run(() => _service.SetCurrentConfig(configId));
+                await Task.Run(() => _service.SetCurrentFont(fontId));
                 _service.SetInputText(template);
-                _service.ConvertFont(true);
+                await Task.Run(() => _service.ConvertFont(true));
                 source = _service.GetOutputSourceText();
                 header = _service.GetOutputHeaderText();
             }
@@ -227,7 +219,7 @@ namespace WebControllers.Controllers
                     Head = body.Head,
                     Name = body.Name,
                 };
-                newId = _service.AddConvertion(newConvertion);
+                newId = await Task.Run(() => _service.AddConvertion(newConvertion));
             }
             catch (NotAuthorizedException ex)
             {

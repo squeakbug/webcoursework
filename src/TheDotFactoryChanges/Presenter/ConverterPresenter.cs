@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 
 using DataAccessInterface;
 
@@ -65,9 +66,9 @@ namespace Presenter
 
         // === Event handlers ===
 
-        public void ConfigureForm()
+        public async void ConfigureForm()
         {
-            IEnumerable<Configuration> configurations = _service.GetConfigurations();
+            IEnumerable<Configuration> configurations = await _service.GetConfigurations();
             _configurations = new List<int>();
             var display_names = new List<string>();
             foreach (var item in configurations)
@@ -78,7 +79,7 @@ namespace Presenter
             View.SetConfigurations(display_names);
             View.SetCurrentConfiguration(0);
 
-            Configuration cfg = _service.GetCurrentConfig();
+            Configuration cfg = await _service.GetCurrentConfig();
             string appVer = String.Format("The Dot Factory v.{0}", Configuration.ApplicationVersion);
             View.SetApplicationVersion(appVer);
             View.SetNewlineChar("\n");
@@ -170,9 +171,9 @@ namespace Presenter
         {
             _imageName = str;
         }
-        private void _service_ConfigsUpdated()
+        private async void _service_ConfigsUpdated()
         {
-            IEnumerable<Configuration> configs = _service.GetConfigurations();
+            IEnumerable<Configuration> configs = await _service.GetConfigurations();
             var displayNames = new List<string>();
             _configurations.Clear();
             foreach (var item in configs)

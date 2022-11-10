@@ -1,9 +1,15 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+
 using Moq;
 using NUnit.Framework;
+using NUnit.Allure.Core;
 
 using Service;
 using DataAccessInterface;
-using NUnit.Allure.Core;
 
 namespace ConverterServiceTest
 {
@@ -14,7 +20,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(r => r.CreateConfigRepository())
                        .Returns(cfgRepo.Object);
@@ -31,7 +37,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
@@ -51,7 +57,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
@@ -71,10 +77,10 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                   .Returns(cfg);
+                   .Returns(Task.FromResult(cfg));
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var repoFactory = new Mock<IRepositoryFactory>();
@@ -83,9 +89,9 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            TestDelegate del = () => sut.ConvertFont(false);
+            AsyncTestDelegate del = () => sut.ConvertFont(false);
 
-            Assert.Throws<ClientErrorException>(del);
+            Assert.ThrowsAsync<ClientErrorException>(del);
         }
 
         [Test]
@@ -94,13 +100,13 @@ namespace ConverterServiceTest
             var font = GetFontSample()[0];
             var fontRepo = new Mock<IFontRepository>();
             fontRepo.Setup(r => r.GetFontById(font.Id))
-                    .Returns(font);
+                    .Returns(Task.FromResult(font));
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(new List<Configuration>());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)new List<Configuration>()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                   .Returns((Configuration)null);
+                   .Returns(Task.FromResult((Configuration)null));
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns((Configuration)null);
             var repoFactory = new Mock<IRepositoryFactory>();
@@ -113,10 +119,10 @@ namespace ConverterServiceTest
             sut.SetCurrentFont(font.Id);
             sut.SetInputText("1234567890");
 
-            TestDelegate del = () => sut.ConvertFont(false);
+            AsyncTestDelegate del = () => sut.ConvertFont(false);
 
             fontRepo.Verify(r => r.GetFontById(font.Id));
-            Assert.Throws<ClientErrorException>(del);
+            Assert.ThrowsAsync<ClientErrorException>(del);
         }
 
         [Test]
@@ -138,16 +144,16 @@ namespace ConverterServiceTest
         }
 
         [Test]
-        public void CreateConfigTest()
+        public async Task CreateConfigTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             cfgRepo.Setup(r => r.Create(cfg))
-                   .Returns(cfg.Id);
+                   .Returns(Task.FromResult(cfg.Id));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(r => r.CreateConfigRepository())
                        .Returns(cfgRepo.Object);
@@ -155,7 +161,7 @@ namespace ConverterServiceTest
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
             sut.ConfigAdded += (c) => { };
 
-            var id = sut.CreateConfig(cfg);
+            var id = await sut.CreateConfig(cfg);
 
             Assert.AreEqual(cfg.Id, id);
             cfgRepo.Verify(r => r.Create(cfg));
@@ -166,12 +172,12 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                   .Returns(cfg);
+                   .Returns(Task.FromResult(cfg));
             cfgRepo.Setup(r => r.Delete(cfg.Id));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(r => r.CreateConfigRepository())
@@ -186,23 +192,23 @@ namespace ConverterServiceTest
         }
 
         [Test]
-        public void GetConfigByIdTest()
+        public async Task GetConfigByIdTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                   .Returns(cfg);
+                   .Returns(Task.FromResult(cfg));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(r => r.CreateConfigRepository())
                        .Returns(cfgRepo.Object);
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            var resCfg = sut.GetConfigById(cfg.Id);
+            var resCfg = await sut.GetConfigById(cfg.Id);
 
             Assert.AreEqual(cfg, resCfg);
         }
@@ -212,21 +218,21 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                   .Returns(cfg);
+                   .Returns(Task.FromResult(cfg));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(r => r.CreateConfigRepository())
                        .Returns(cfgRepo.Object);
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            TestDelegate del = () => sut.SetCurrentConfig(-100);
+            AsyncTestDelegate del = () => sut.SetCurrentConfig(-100);
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
@@ -234,7 +240,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
@@ -254,10 +260,10 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetConfigurationById(cfg.Id))
-                    .Returns(cfg);
+                    .Returns(Task.FromResult(cfg));
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             cfgRepo.Setup(r => r.Update(cfg));
@@ -269,24 +275,24 @@ namespace ConverterServiceTest
             sut.ConfigUpdated += (c) => { };
             cfg.Id = -100;
 
-            TestDelegate del = () => sut.UpdateConfig(cfg);
+            AsyncTestDelegate del = () => sut.UpdateConfig(cfg);
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
-        public void GetFontNamesTest()
+        public async Task GetFontNamesTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var fonts = GetFontSample();
             fontRepo.Setup(r => r.GetFonts())
-                    .Returns(fonts);
+                    .Returns(Task.FromResult((IEnumerable<DataAccessInterface.Font>)fonts));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
                        .Returns(fontRepo.Object);
@@ -295,7 +301,7 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            var resFontNames = new List<string>(sut.GetFontNames());
+            var resFontNames = new List<string>(await sut.GetFontNames());
 
             Assert.AreEqual("name_001", resFontNames[0]);
             Assert.AreEqual("name_002", resFontNames[1]);
@@ -308,14 +314,14 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var cvtRepo = new Mock<IConvertionRepository>();
             var cvts = GetConvertionSample();
             cvtRepo.Setup(r => r.GetConvertions())
-                   .Returns(cvts);
+                   .Returns(Task.FromResult((IEnumerable<Convertion>)cvts));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateConvertionRepository())
                        .Returns(cvtRepo.Object);
@@ -334,14 +340,14 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var cvtRepo = new Mock<IConvertionRepository>();
             var cvt = GetConvertionSample()[0];
             cvtRepo.Setup(r => r.GetConvertionById(cvt.Id))
-                   .Returns(cvt);
+                   .Returns(Task.FromResult(cvt));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateConvertionRepository())
                        .Returns(cvtRepo.Object);
@@ -357,18 +363,18 @@ namespace ConverterServiceTest
         }
 
         [Test]
-        public void AddConvertionTest()
+        public async Task AddConvertionTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var cvtRepo = new Mock<IConvertionRepository>();
             var cvt = GetConvertionSample()[0];
             cvtRepo.Setup(r => r.Create(cvt))
-                   .Returns(cvt.Id);
+                   .Returns(Task.FromResult(cvt.Id));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateConvertionRepository())
                        .Returns(cvtRepo.Object);
@@ -377,25 +383,25 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            int id = sut.AddConvertion(cvt);
+            int id = await sut.AddConvertion(cvt);
 
             cvtRepo.Verify(r => r.Create(cvt));
             Assert.AreEqual(cvt.Id, id);
         }
 
         [Test]
-        public void SetCurrentFontTest()
+        public async Task SetCurrentFontTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var font = GetFontSample()[0];
             fontRepo.Setup(r => r.GetFontById(font.Id))
-                    .Returns(font);
+                    .Returns(Task.FromResult(font));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
                        .Returns(fontRepo.Object);
@@ -404,7 +410,7 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            var resFont = sut.GetFontById(font.Id);
+            var resFont = await sut.GetFontById(font.Id);
 
             Assert.AreEqual(resFont, font);
             fontRepo.Verify(r => r.GetFontById(font.Id), Times.Once());
@@ -415,7 +421,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
@@ -441,7 +447,7 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
@@ -457,24 +463,24 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            TestDelegate del = () => sut.AddFont(font);
+            AsyncTestDelegate del = () => sut.AddFont(font);
 
-            Assert.Throws<ApplicationException>(del);
+            Assert.ThrowsAsync<ApplicationException>(del);
         }
 
         [Test]
-        public void GetFontsTest()
+        public async Task GetFontsTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var fonts = GetFontSample();
             fontRepo.Setup(r => r.GetFonts())
-                    .Returns(fonts);
+                    .Returns(Task.FromResult((IEnumerable<Font>)fonts));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
                        .Returns(fontRepo.Object);
@@ -483,25 +489,25 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            var resFonts = sut.GetFonts();
+            var resFonts = new List<Font>(await sut.GetFonts());
 
-            Assert.AreEqual(3, resFonts.Count());
+            Assert.AreEqual(3, resFonts.Count);
             fontRepo.Verify(r => r.GetFonts(), Times.Once());
         }
 
         [Test]
-        public void GetFontByIdTest()
+        public async Task GetFontByIdTest()
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var font = GetFontSample()[0];
             fontRepo.Setup(r => r.GetFontById(font.Id))
-                    .Returns(font);
+                    .Returns(Task.FromResult(font));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
                        .Returns(fontRepo.Object);
@@ -510,7 +516,7 @@ namespace ConverterServiceTest
             var textRenderer = new Mock<ITextRenderer>();
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
 
-            var resFont = sut.GetFontById(font.Id);
+            var resFont = await sut.GetFontById(font.Id);
 
             Assert.AreEqual(resFont, font);
             fontRepo.Verify(r => r.GetFontById(font.Id), Times.Once());
@@ -521,14 +527,14 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var font = GetFontSample()[0];
             fontRepo.Setup(r => r.GetFontById(font.Id))
-                    .Returns(font);
+                    .Returns(Task.FromResult(font));
             fontRepo.Setup(r => r.Update(font));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
@@ -539,9 +545,9 @@ namespace ConverterServiceTest
             var sut = new ConverterService(repoFactory.Object, textRenderer.Object);
             font.Id = -100;
 
-            TestDelegate del = () => sut.UpdateFont(font);
+            AsyncTestDelegate del = () => sut.UpdateFont(font);
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
@@ -549,14 +555,14 @@ namespace ConverterServiceTest
         {
             var cfgRepo = new Mock<IConfigRepository>();
             cfgRepo.Setup(r => r.GetConfigurations())
-                   .Returns(GetUserConfigSample());
+                   .Returns(Task.FromResult((IEnumerable<Configuration>)GetUserConfigSample()));
             var cfg = GetUserConfigSample()[0];
             cfgRepo.Setup(r => r.GetFirstOrDefaultConfig())
                    .Returns(cfg);
             var fontRepo = new Mock<IFontRepository>();
             var font = GetFontSample()[0];
             fontRepo.Setup(r => r.GetFontById(font.Id))
-                    .Returns(font);
+                    .Returns(Task.FromResult(font));
             fontRepo.Setup(r => r.Delete(font.Id));
             var repoFactory = new Mock<IRepositoryFactory>();
             repoFactory.Setup(f => f.CreateFontRepository())
@@ -571,8 +577,6 @@ namespace ConverterServiceTest
             fontRepo.Verify(r => r.GetFontById(font.Id));
             fontRepo.Verify(r => r.Delete(font.Id));
         }
-
-
 
         private List<DataAccessInterface.Convertion> GetConvertionSample()
         {

@@ -8,10 +8,10 @@ namespace DataAccessInterface
 {
     public interface IFontRepository
     {
-        IEnumerable<Font> GetFonts();
-        Font GetFontById(int id);
-        int Create(Font cfg);
-        void Update(Font cfg);
-        void Delete(int id);
+        Task<IEnumerable<Font>> GetFonts();
+        Task<Font> GetFontById(int id);
+        Task<int> Create(Font cfg);
+        Task Update(Font cfg);
+        Task Delete(int id);
     }
 }

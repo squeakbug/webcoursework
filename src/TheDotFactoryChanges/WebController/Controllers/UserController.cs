@@ -31,14 +31,6 @@ namespace WebControllers.Controllers
             _service = service ?? throw new ArgumentNullException("bad service");
             _authService = authService ?? throw new ArgumentNullException("bad auth service");
             _logger = logger ?? throw new ArgumentNullException("bad logger");
-
-            _service.OutputSourceTextChanged += (text) => { };
-            _service.OutputHeaderTextChanged += (text) => { };
-            _service.FontChanged += (font) => { };
-            _service.ConfigRemoved += (id) => { };
-            _service.ConfigAdded += (id) => { };
-            _service.ConfigUpdated += (id) => { };
-            _service.ConfigsUpdated += () => { };
         }
 
         [HttpGet, Route("users")]
@@ -51,7 +43,7 @@ namespace WebControllers.Controllers
             IEnumerable<UserInfo> infos;
             try
             {
-                infos = _authService.GetUsers();
+                infos = await Task.Run(() => _authService.GetUsers());
             }
             catch (NotAuthorizedException ex)
             {
@@ -89,7 +81,7 @@ namespace WebControllers.Controllers
             UserInfo info;
             try
             {
-                info = _authService.GetUserById((int)userId);
+                info = await Task.Run(() => _authService.GetUserById((int)userId));
             }
             catch (NotAuthorizedException ex)
             {
@@ -137,11 +129,11 @@ namespace WebControllers.Controllers
             {
                 if (body.Op == "ChangePassword")
                 {
-                    _authService.UpdateUserPassword((int)userId, body.Value);
+                    await Task.Run(() => _authService.UpdateUserPassword((int)userId, body.Value));
                 }
                 else if (body.Op == "ChangeName")
                 {
-                    _authService.UpdateUserName((int)userId, body.Value);
+                    await Task.Run(() => _authService.UpdateUserName((int)userId, body.Value));
                 }
                 else
                 {
@@ -217,7 +209,7 @@ namespace WebControllers.Controllers
             long newId;
             try
             {
-                newId = _authService.RegistrateUser(body.Login, body.Password, body.RepPassword);
+                newId = await Task.Run(() => _authService.RegistrateUser(body.Login, body.Password, body.RepPassword));
             }
             catch (ApplicationException ex)
             {

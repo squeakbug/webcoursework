@@ -1,11 +1,15 @@
-using Moq;
+using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
-using DataAccessInterface;
-using AuthService;
 using NUnit.Allure.Core;
 using Allure.Commons;
 using NUnit.Allure.Attributes;
 using NUnit.Framework;
+using Moq;
+
+using DataAccessInterface;
+using AuthService;
 
 namespace AuthServiceTest
 {
@@ -21,9 +25,9 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate action = () => sut.RegistrateUser("user", "pass", "bad_pass");
+            AsyncTestDelegate action = () => sut.RegistrateUser("user", "pass", "bad_pass");
 
-            Assert.Throws<ApplicationException>(action);
+            Assert.ThrowsAsync<ApplicationException>(action);
         }
 
         [Test]
@@ -51,7 +55,7 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserByLogin(user.Name))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
@@ -71,13 +75,13 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserByLogin(user.Name))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.LoginUser("user", "pass");
+            AsyncTestDelegate del = () => sut.LoginUser("user", "pass");
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
@@ -90,7 +94,7 @@ namespace AuthServiceTest
             var user = GetUnlogginedUserInfoSample()[0];
             user.Loggined = true;
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
@@ -110,13 +114,13 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.LogoutUser(user.Id);
+            AsyncTestDelegate del = () => sut.LogoutUser(user.Id);
 
-            Assert.Throws<ApplicationException>(del);
+            Assert.ThrowsAsync<ApplicationException>(del);
         }
 
         [Test]
@@ -129,13 +133,13 @@ namespace AuthServiceTest
             var user = GetUnlogginedUserInfoSample()[0];
             user.Loggined = true;
             userRepoMock.Setup(repo => repo.GetUserByLogin(user.Name))
-                        .Returns((UserInfo)null);
+                        .Returns(Task.FromResult((UserInfo)null));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.LogoutUser(user.Id);
+            AsyncTestDelegate del = () => sut.LogoutUser(user.Id);
 
-            Assert.Throws<ApplicationException>(del);
+            Assert.ThrowsAsync<ApplicationException>(del);
         }
 
         [Test]
@@ -147,7 +151,7 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserById(It.IsAny<int>()))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             var sut = new AuthService.AuthService(repoMock.Object);
 
             var retUser = sut.GetUserById(user.Id);
@@ -167,13 +171,13 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.UpdateUserPassword(user.Id, "newPass");
+            AsyncTestDelegate del = () => sut.UpdateUserPassword(user.Id, "newPass");
 
-            Assert.Throws<ClientErrorException>(del);
+            Assert.ThrowsAsync<ClientErrorException>(del);
         }
 
         [Test]
@@ -186,7 +190,7 @@ namespace AuthServiceTest
             var user = GetUnlogginedUserInfoSample()[0];
             user.Loggined = true;
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
@@ -206,13 +210,13 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns((UserInfo)null);
+                        .Returns(Task.FromResult((UserInfo)null));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.UpdateUserPassword(user.Id, "newPass");
+            AsyncTestDelegate del = () => sut.UpdateUserPassword(user.Id, "newPass");
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
@@ -225,13 +229,13 @@ namespace AuthServiceTest
             var user = GetUnlogginedUserInfoSample()[0];
             user.Loggined = true;
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             userRepoMock.Setup(repo => repo.Update(It.IsAny<UserInfo>()));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.UpdateUserPassword(user.Id, null);
+            AsyncTestDelegate del = () => sut.UpdateUserPassword(user.Id, null);
 
-            Assert.Throws<ClientErrorException>(del);
+            Assert.ThrowsAsync<ClientErrorException>(del);
         }
 
         [Test]
@@ -244,7 +248,7 @@ namespace AuthServiceTest
             var user = GetUnlogginedUserInfoSample()[0];
             user.Loggined = true;
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns(user);
+                        .Returns(Task.FromResult(user));
             user.Name = "test";
             userRepoMock.Setup(repo => repo.Update(user));
             var sut = new AuthService.AuthService(repoMock.Object);
@@ -263,12 +267,12 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             var user = GetUnlogginedUserInfoSample()[0];
             userRepoMock.Setup(repo => repo.GetUserById(user.Id))
-                        .Returns((UserInfo) null);
+                        .Returns(Task.FromResult((UserInfo) null));
             var sut = new AuthService.AuthService(repoMock.Object);
 
-            TestDelegate del = () => sut.IsUserLoggined(user.Id);
+            AsyncTestDelegate del = () => sut.IsUserLoggined(user.Id);
 
-            Assert.Throws<NotFoundException>(del);
+            Assert.ThrowsAsync<NotFoundException>(del);
         }
 
         [Test]
@@ -280,7 +284,7 @@ namespace AuthServiceTest
                     .Returns(userRepoMock.Object);
             IEnumerable<UserInfo> users = GetUnlogginedUserInfoSample();
             userRepoMock.Setup(repo => repo.GetUserInfos())
-                        .Returns(users);
+                        .Returns(Task.FromResult(users));
             var sut = new AuthService.AuthService(repoMock.Object);
 
             var result = sut.GetUsers();

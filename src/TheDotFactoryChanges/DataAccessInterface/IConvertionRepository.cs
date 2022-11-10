@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
     public interface IConvertionRepository
     {
-        IEnumerable<Convertion> GetConvertions();
-        Convertion GetConvertionById(int id);
-        int Create(Convertion cvt);
-        void Update(Convertion cvt);
-        void Delete(int id);
+        Task<IEnumerable<Convertion>> GetConvertions();
+        Task<Convertion> GetConvertionById(int id);
+        Task<int> Create(Convertion cvt);
+        Task Update(Convertion cvt);
+        Task Delete(int id);
     }
 }

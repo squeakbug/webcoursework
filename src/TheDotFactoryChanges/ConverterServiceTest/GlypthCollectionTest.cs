@@ -1,11 +1,14 @@
-﻿using NUnit.Allure.Core;
-using Service;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using NUnit.Allure.Core;
+using NUnit.Framework;
+
+using Service;
 
 namespace ConverterServiceTest
 {

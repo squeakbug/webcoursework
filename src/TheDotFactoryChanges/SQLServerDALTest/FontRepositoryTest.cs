@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using NUnit.Framework;
+using NUnit.Allure.Core;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 using DataAccessSQLServer;
-using NUnit.Allure.Core;
 
 namespace SQLServerDALTest
 {
@@ -27,7 +28,7 @@ namespace SQLServerDALTest
                        .Returns(fontDbSetMock.Object);
             fontSetMock.Setup(set =>
                 set.Fonts.Add(It.IsAny<DataAccessSQLServer.Font>()));
-            fontSetMock.Setup(set => set.SaveChanges());
+            fontSetMock.Setup(set => set.SaveChangesAsync());
             var sut = new FontRepository(fontSetMock.Object);
             var font = GetFontSample()[0];
 
@@ -36,11 +37,11 @@ namespace SQLServerDALTest
             fontSetMock.Verify(set =>
                 set.Fonts.Add(It.Is<DataAccessSQLServer.Font>(f =>
                     f.Name == font.Name)));
-            fontSetMock.Verify(set => set.SaveChanges());
+            fontSetMock.Verify(set => set.SaveChangesAsync());
         }
 
         [Test]
-        public void GetFontByIdTest()
+        public async Task GetFontByIdTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -51,14 +52,14 @@ namespace SQLServerDALTest
             fontSetMock.Setup(f => f.Fonts)
                        .Returns(fontDbSetMock.Object);
             fontSetMock.Setup(set =>
-                set.Fonts.Find(It.IsAny<int>()))
-                       .Returns(font);
+                set.Fonts.FindAsync(It.IsAny<int>()))
+                       .ReturnsAsync(font);
             var sut = new FontRepository(fontSetMock.Object);
 
-            var retFont = sut.GetFontById(font.Id);
+            var retFont = await sut.GetFontById(font.Id);
 
             fontSetMock.Verify(set =>
-                set.Fonts.Find(It.Is<int>(id =>
+                set.Fonts.FindAsync(It.Is<int>(id =>
                     id == font.Id)));
         }
 

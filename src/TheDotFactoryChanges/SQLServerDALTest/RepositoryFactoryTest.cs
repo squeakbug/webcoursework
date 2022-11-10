@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using NUnit.Allure.Core;
+using NUnit.Framework;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 using DataAccessSQLServer;
-using NUnit.Allure.Core;
 
 namespace SQLServerDALTest
 {

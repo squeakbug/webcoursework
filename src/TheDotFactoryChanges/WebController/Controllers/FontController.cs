@@ -29,14 +29,6 @@ namespace WebControllers.Controllers
             _service = service ?? throw new ArgumentNullException("bad service");
             _authService = authService ?? throw new ArgumentNullException("bad auth service");
             _logger = logger ?? throw new ArgumentNullException("bad logger");
-
-            _service.OutputSourceTextChanged += (text) => { };
-            _service.OutputHeaderTextChanged += (text) => { };
-            _service.FontChanged += (font) => { };
-            _service.ConfigRemoved += (id) => { };
-            _service.ConfigAdded += (id) => { };
-            _service.ConfigUpdated += (id) => { };
-            _service.ConfigsUpdated += () => { };
         }
 
         [Authorize]
@@ -50,7 +42,7 @@ namespace WebControllers.Controllers
             IEnumerable<string> names;
             try
             {
-                names = _service.GetFontNames();
+                names = await Task.Run(() => _service.GetFontNames());
             }
             catch (ApplicationException ex)
             {
@@ -74,7 +66,7 @@ namespace WebControllers.Controllers
             IEnumerable<Font> modelFonts;
             try
             {
-                modelFonts = _service.GetFonts();
+                modelFonts = await Task.Run(() => _service.GetFonts());
             }
             catch (ApplicationException ex)
             {
@@ -101,7 +93,7 @@ namespace WebControllers.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> FontGET(long fontId)
         {
-            var modelFont = _service.GetFontById((int)fontId);
+            var modelFont = await Task.Run(() => _service.GetFontById((int)fontId));
             return Ok(new Font
             {
                 Id = modelFont.Id,
@@ -121,12 +113,12 @@ namespace WebControllers.Controllers
             int id;
             try
             {
-                id = _service.AddFont(new Font
+                id = await Task.Run(() => _service.AddFont(new Font
                 {
                     Id = (int)font.Id,
                     Name = font.Name,
                     Size = (int)font.Size,
-                });
+                }));
             }
             catch (ApplicationException ex)
             {
@@ -145,12 +137,12 @@ namespace WebControllers.Controllers
         {
             try
             {
-                _service.UpdateFont(new Font
+                await Task.Run(() => _service.UpdateFont(new Font
                 {
                     Id = (int)fontId,
                     Name = font.Name,
                     Size = (int)font.Size,
-                });
+                }));
             }
             catch (ApplicationException ex)
             {
@@ -172,7 +164,7 @@ namespace WebControllers.Controllers
         {
             try
             {
-                _service.DeleteFont((int)fontId);
+                await Task.Run(() => _service.DeleteFont((int)fontId));
             }
             catch (NotFoundException ex)
             {

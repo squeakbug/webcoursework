@@ -1,8 +1,15 @@
-using DataAccessInterface;
-using DataAccessSQLServer;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Allure.Core;
+using NUnit.Framework;
+
+using DataAccessInterface;
+using DataAccessSQLServer;
 
 namespace SQLServerDALTest
 {
@@ -22,7 +29,7 @@ namespace SQLServerDALTest
             cfgSetMock.Setup(set =>
                 set.UserConfig.Add(It.IsAny<DataAccessSQLServer.UserConfig>()));
             cfgSetMock.Setup(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
             var sut = new ConfigRepository(cfgSetMock.Object);
             var cfg = GetUserConfigSample()[0];
 
@@ -32,11 +39,11 @@ namespace SQLServerDALTest
                 set.UserConfig.Add(It.Is<DataAccessSQLServer.UserConfig>(cfg =>
                     cfg.DisplayName == cfg.DisplayName)));
             cfgSetMock.Verify(set =>
-                set.SaveChanges());
+                set.SaveChangesAsync());
         }
 
         [Test]
-        public void GetConfigByIdTest()
+        public async Task GetConfigByIdTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -47,19 +54,19 @@ namespace SQLServerDALTest
             cfgSetMock.Setup(c => c.UserConfig)
                       .Returns(cfgDbSetMock.Object);
             cfgSetMock.Setup(set =>
-                set.UserConfig.Find(It.IsAny<int>()))
-                      .Returns(cfg);
+                set.UserConfig.FindAsync(It.IsAny<int>()))
+                      .ReturnsAsync(cfg);
             var sut = new ConfigRepository(cfgSetMock.Object);
 
-            var retcfg = sut.GetConfigurationById(cfg.Id);
+            var retcfg = await sut.GetConfigurationById(cfg.Id);
 
             cfgSetMock.Verify(set =>
-                set.UserConfig.Find(It.Is<int>(id =>
+                set.UserConfig.FindAsync(It.Is<int>(id =>
                     id == cfg.Id)));
         }
 
         [Test]
-        public void GetConfigsTest()
+        public async Task GetConfigsTest()
         {
             var options = SqlServerDbContextOptionsExtensions
                 .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
@@ -73,7 +80,7 @@ namespace SQLServerDALTest
                        .Returns(cfgs.AsQueryable());
             var sut = new ConfigRepository(cfgSetMock.Object);
 
-            var retcfgs = sut.GetConfigurations();
+            var retcfgs = await sut.GetConfigurations();
 
             cfgSetMock.Verify(set => set.GetUserConfigSet());
             Assert.NotNull(retcfgs);

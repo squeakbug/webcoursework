@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
     public interface IUserRepository
     {
-        IEnumerable<UserInfo> GetUserInfos();
-        UserInfo GetUserById(int id);
-        UserInfo GetUserByLogin(string login);
-        int Create(UserInfo info);
-        void Update(UserInfo info);
-        void Delete(int id);
+        Task<IEnumerable<UserInfo>> GetUserInfos();
+        Task<UserInfo> GetUserById(int id);
+        Task<UserInfo> GetUserByLogin(string login);
+        Task<int> Create(UserInfo info);
+        Task Update(UserInfo info);
+        Task Delete(int id);
     }
 }

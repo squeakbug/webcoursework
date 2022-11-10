@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessSQLServer
 {
@@ -44,5 +46,11 @@ namespace DataAccessSQLServer
         {
             return base.SaveChanges();
         }
+
+        public virtual async Task<int> SaveChangesAsync()
+        {
+            return await base.SaveChangesAsync();
+        }
+
     }
 }
