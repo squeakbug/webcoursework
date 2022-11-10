@@ -13,14 +13,13 @@ build-job:
   stage: build
   image:
     name: docker/compose:latest
-  #before_script:
-  #  - docker login registry.gitlab.com -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
-  script:
+  before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
+  script:
     - docker-compose -f src/TheDotFactoryChanges/docker-compose.yml build
   #  - docker-compose -f src\TheDotFactoryChanges\aspnetcore.dockerfile push
-  #after_script:
-  #  - docker logout ${CI_REGISTRY}
+  after_script:
+    - docker logout ${CI_REGISTRY}
 
 unit-test-job:
   stage: test
