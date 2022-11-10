@@ -16,7 +16,7 @@ build-job:
   before_script:
     - docker login registry.gitlab.com -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
   script:
-    - docker-compose -f src\\TheDotFactoryChanges\\aspnetcore.dockerfile build
+    - docker-compose -f src/TheDotFactoryChanges/aspnetcore.dockerfile build
   #  - docker-compose -f src\TheDotFactoryChanges\aspnetcore.dockerfile push
   after_script:
     - docker logout ${CI_REGISTRY}
