@@ -2,8 +2,8 @@ stages:
   - build
   - test
 
-#services:
-#  - docker:dind
+services:
+  - docker:dind
 
 before_script:
   - docker version
