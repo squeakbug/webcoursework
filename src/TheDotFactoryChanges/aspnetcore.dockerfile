@@ -16,7 +16,7 @@ COPY AuthService/*.csproj ./AuthService/
 COPY AuthServiceTest/*.csproj ./AuthServiceTest/
 COPY ConverterServiceTest/*.csproj ./ConverterServiceTest/
 COPY SQLServerDALTest/*.csproj ./SQLServerDALTest/
-RUN dotnet restore #-r win-x64 /p:PublishReadyToRun=true
+RUN dotnet restore
 
 COPY . .
 WORKDIR /src/WebController

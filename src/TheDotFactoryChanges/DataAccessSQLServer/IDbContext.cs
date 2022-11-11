@@ -23,5 +23,6 @@ namespace DataAccessSQLServer
         void DatabaseEnsureCreated();
         int SaveChanges();
         Task<int> SaveChangesAsync();
+        void Dispose();
     }
 }

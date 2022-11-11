@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
-    public interface IConfigRepository
+    public interface IConfigRepository : IDisposable
     {
         Task<IEnumerable<Configuration>> GetConfigurations();
         Task<Configuration> GetConfigurationById(int id);

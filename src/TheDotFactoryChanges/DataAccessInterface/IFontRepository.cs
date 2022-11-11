@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
-    public interface IFontRepository
+    public interface IFontRepository : IDisposable
     {
         Task<IEnumerable<Font>> GetFonts();
         Task<Font> GetFontById(int id);

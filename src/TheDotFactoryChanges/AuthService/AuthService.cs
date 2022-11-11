@@ -18,43 +18,62 @@ namespace AuthService
 
         public async Task<UserInfo> GetUserById(int userId)
         {
-            var repo = _repositoryFactory.CreateUserRepository();
-            return await repo.GetUserById(userId);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserById(userId);
+            }
+            return user;
         }
         public async Task UpdateUserPassword(int userId, string newPassword)
         {
             if (newPassword == null)
                 throw new ClientErrorException("new password must not be null");
-            var repo = _repositoryFactory.CreateUserRepository();
-            var user = await repo.GetUserById(userId);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserById(userId);
+            }
             if (user == null)
                 throw new NotFoundException($"no user with id = {userId}");
             if (user.Loggined == false)
                 throw new ClientErrorException($"client with id = {userId} not loggined");
             user.Password = newPassword;
 
-            repo = _repositoryFactory.CreateUserRepository();
-            await repo.Update(user);
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                await repo.Update(user);
+            }
         }
         public async Task UpdateUserName(int userId, string newName)
         {
             if (newName == null)
                 throw new ClientErrorException("new name must not be null");
-            var repo = _repositoryFactory.CreateUserRepository();
-            var user = await repo.GetUserById(userId);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserById(userId);
+            }
+
             if (user == null)
                 throw new NotFoundException($"no user with id = {userId}");
             if (user.Loggined == false)
                 throw new ClientErrorException($"client with id = {userId} not loggined");
             user.Name = newName;
 
-            repo = _repositoryFactory.CreateUserRepository();
-            await repo.Update(user);
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                await repo.Update(user);
+            }
         }
         public async Task<int> LoginUser(string login, string password)
         {
-            var repo = _repositoryFactory.CreateUserRepository();
-            var user = await repo.GetUserByLogin(login);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserByLogin(login);
+            }
+
             if (user == null)
                 throw new NotFoundException($"no user with login = {login}");
             if (user.Password != password)
@@ -63,33 +82,44 @@ namespace AuthService
                 throw new ClientErrorException($"user with id = {user.Id} already loggined");
             user.Loggined = true;
 
-            repo = _repositoryFactory.CreateUserRepository();
-            await repo.Update(user);
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                await repo.Update(user);
+            }
             return user.Id;
         }
         public async Task LogoutUser(int userId)
         {
-            var repo = _repositoryFactory.CreateUserRepository();
-            var user = await repo.GetUserById(userId);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserById(userId);
+            }
+
             if (user == null)
                 throw new ApplicationException($"no user with id = {userId}");
             if (user.Loggined == false)
                 throw new ApplicationException($"user with id = {userId} not yet loggined");
             user.Loggined = false;
 
-            repo = _repositoryFactory.CreateUserRepository();
-            await repo.Update(user);
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                await repo.Update(user);
+            }
         }
         public async Task<int> RegistrateUser(string login, string password, string repPassword)
         {
             if (password != repPassword)
                 throw new ApplicationException("password != repPassword");
-            var repo = _repositoryFactory.CreateUserRepository();
 
-            var user = await repo.GetUserByLogin(login);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserByLogin(login);
+            }
+
             if (user != null)
                 throw new ApplicationException("user already exists");
-
             var newUser = new UserInfo
             {
                 Loggined = false,
@@ -97,22 +127,36 @@ namespace AuthService
                 Name = "default",
                 Password = password,
             };
-            repo = _repositoryFactory.CreateUserRepository();
-            return await repo.Create(newUser);
+
+            int id;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                id = await repo.Create(newUser);
+            }
+            return id;
         }
 
         public async Task<IEnumerable<UserInfo>> GetUsers()
         {
-            var repo = _repositoryFactory.CreateUserRepository();
-            return await repo.GetUserInfos();
+            IEnumerable<UserInfo> users;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                users = await repo.GetUserInfos();
+            }
+            return users;
         }
 
         public async Task<bool> IsUserLoggined(int userId)
         {
-            var repo = _repositoryFactory.CreateUserRepository();
-            var user = await repo.GetUserById(userId);
+            UserInfo user;
+            using (var repo = _repositoryFactory.CreateUserRepository())
+            {
+                user = await repo.GetUserById(userId);
+            }
+
             if (user == null)
                 throw new NotFoundException($"no user with id = {userId}");
+
             return user.Loggined;
         }
     }

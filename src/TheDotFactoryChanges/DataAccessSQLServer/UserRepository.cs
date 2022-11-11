@@ -10,6 +10,7 @@ namespace DataAccessSQLServer
     public class UserRepository : IUserRepository
     {
         IDbContext _ctx;
+        private bool _disposedValue;
 
         public UserRepository(IDbContext ctx)
         {
@@ -77,6 +78,25 @@ namespace DataAccessSQLServer
             catch
             {
                 throw new ApplicationException("save changes");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _ctx.Dispose();
+                }
+
+                _disposedValue = true;
             }
         }
     }

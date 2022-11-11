@@ -52,5 +52,10 @@ namespace DataAccessSQLServer
             return await base.SaveChangesAsync();
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
+
     }
 }

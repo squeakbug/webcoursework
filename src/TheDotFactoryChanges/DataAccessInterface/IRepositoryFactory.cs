@@ -1,4 +1,6 @@
-﻿namespace DataAccessInterface
+﻿using System;
+
+namespace DataAccessInterface
 {
     public interface IRepositoryFactory
     {

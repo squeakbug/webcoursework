@@ -11,6 +11,7 @@ namespace DataAccessSQLServer
     public class ConvertionRepository : IConvertionRepository
     {
         IDbContext _ctx;
+        private bool _disposedValue;
 
         public ConvertionRepository(IDbContext ctx)
         {
@@ -70,6 +71,25 @@ namespace DataAccessSQLServer
             catch
             {
                 throw new ApplicationException("save changes");
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _ctx.Dispose();
+                }
+
+                _disposedValue = true;
             }
         }
     }

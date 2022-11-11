@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
-    public interface IUserRepository
+    public interface IUserRepository : IDisposable
     {
         Task<IEnumerable<UserInfo>> GetUserInfos();
         Task<UserInfo> GetUserById(int id);

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessInterface
 {
-    public interface IConvertionRepository
+    public interface IConvertionRepository : IDisposable
     {
         Task<IEnumerable<Convertion>> GetConvertions();
         Task<Convertion> GetConvertionById(int id);

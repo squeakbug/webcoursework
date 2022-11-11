@@ -12,6 +12,8 @@ namespace DataAccessSQLServer
         public string InitialCatalog { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public bool Pooling { get; set; }
+        private string _connectionString;
 
         private IDbContextFactory _dbContextFactory;
 
@@ -25,17 +27,20 @@ namespace DataAccessSQLServer
                     InitialCatalog = InitialCatalog,
                     UserID = User,
                     Password = Password,
+                    Pooling = Pooling,
                 };
                 return builder.ToString();
             }
         }
 
-        public RepositoryFactory(IDbContextFactory factory, string dataSource, string initialCatalog, string user, string passwd)
+        public RepositoryFactory(IDbContextFactory factory, string dataSource,
+            string initialCatalog, string user, string passwd, bool pooling = true)
         {
             DataSource = dataSource;
             InitialCatalog = initialCatalog;
             User = user;
             Password = passwd;
+            Pooling = pooling;
 
             _dbContextFactory = factory ?? throw new ArgumentNullException("db context factory");
         }

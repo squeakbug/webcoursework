@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 
 using DataAccessSQLServer;
+using Microsoft.Data.SqlClient;
 
 namespace SQLServerDALTest
 {
@@ -25,7 +26,7 @@ namespace SQLServerDALTest
             var contextMock = new Mock<IDbContext>();
             contextMock.Setup(f => f.DatabaseEnsureCreated());
             var ctxFactoryMock = new Mock<IDbContextFactory>();
-            ctxFactoryMock.Setup(f => f.CreateContext(options))
+            ctxFactoryMock.Setup(f => f.CreateContext(It.IsAny<DbContextOptions>()))
                           .Returns(contextMock.Object);
             var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
@@ -38,14 +39,14 @@ namespace SQLServerDALTest
         public void CreateConfigRepositoryTest()
         {
             var options = SqlServerDbContextOptionsExtensions
-                .UseSqlServer(new DbContextOptionsBuilder(), "dummy_string")
+                .UseSqlServer(new DbContextOptionsBuilder(), "dummyString")
                 .Options;
             var contextMock = new Mock<IDbContext>();
             contextMock.Setup(f => f.DatabaseEnsureCreated());
             var ctxFactoryMock = new Mock<IDbContextFactory>();
-            ctxFactoryMock.Setup(f => f.CreateContext(options))
+            ctxFactoryMock.Setup(f => f.CreateContext(It.IsAny<DbContextOptions>()))
                           .Returns(contextMock.Object);
-            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
+            var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword", false);
 
             var repo = sut.CreateConfigRepository();
 
@@ -61,7 +62,7 @@ namespace SQLServerDALTest
             var contextMock = new Mock<IDbContext>();
             contextMock.Setup(f => f.DatabaseEnsureCreated());
             var ctxFactoryMock = new Mock<IDbContextFactory>();
-            ctxFactoryMock.Setup(f => f.CreateContext(options))
+            ctxFactoryMock.Setup(f => f.CreateContext(It.IsAny<DbContextOptions>()))
                           .Returns(contextMock.Object);
             var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
@@ -79,7 +80,7 @@ namespace SQLServerDALTest
             var contextMock = new Mock<IDbContext>();
             contextMock.Setup(f => f.DatabaseEnsureCreated());
             var ctxFactoryMock = new Mock<IDbContextFactory>();
-            ctxFactoryMock.Setup(f => f.CreateContext(options))
+            ctxFactoryMock.Setup(f => f.CreateContext(It.IsAny<DbContextOptions>()))
                           .Returns(contextMock.Object);
             var sut = new RepositoryFactory(ctxFactoryMock.Object, "127.0.0.1", "the_dotfactory", "SA", "P@ssword");
 
