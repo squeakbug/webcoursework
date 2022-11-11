@@ -11,6 +11,8 @@ COPY AuthService/*.csproj ./AuthService/
 COPY AuthServiceTest/*.csproj ./AuthServiceTest/
 COPY ConverterServiceTest/*.csproj ./ConverterServiceTest/
 COPY SQLServerDALTest/*.csproj ./SQLServerDALTest/
+COPY CommonITCase/*.csproj ./CommonITCase/
+COPY E2ETest/*.csproj ./E2ETest/
 RUN dotnet restore
 
 RUN dotnet build
