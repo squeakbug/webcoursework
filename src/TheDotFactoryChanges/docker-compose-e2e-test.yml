@@ -6,7 +6,7 @@ services:
       - db
     build:
       context: .
-      dockerfile: aspnetcore-test.dockerfile
+      dockerfile: aspnetcore-e2e-test.dockerfile
     ports:
       - 80
       - 59000-60000:59572

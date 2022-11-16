@@ -19,7 +19,5 @@ RUN dotnet restore
 
 COPY . .
 RUN dotnet build TheDotFactoryChanges.sln
-#RUN dotnet test TheDotFactoryChanges.sln
 
-# run tests on docker run
 ENTRYPOINT ["dotnet", "test"]

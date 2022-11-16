@@ -14,6 +14,7 @@ COPY ConverterServiceTest/*.csproj ./ConverterServiceTest/
 COPY SQLServerDALTest/*.csproj ./SQLServerDALTest/
 COPY CommonITCase/*.csproj ./CommonITCase/
 COPY E2ETest/*.csproj ./E2ETest/
+COPY DBBenchmark/*.csproj ./DBBenchmark/
 RUN dotnet restore
 
 COPY . .
