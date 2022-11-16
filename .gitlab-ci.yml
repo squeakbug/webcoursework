@@ -1,3 +1,6 @@
+image:
+  name: docker/compose:latest
+
 stages:
   - build
   - test
@@ -11,22 +14,21 @@ before_script:
 
 build-job:
   stage: build
-  image:
-    name: docker/compose:latest
   before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
     - docker-compose -f src/TheDotFactoryChanges/docker-compose-test.yml build
-  #  - docker-compose -f src\TheDotFactoryChanges\aspnetcore.dockerfile push
   after_script:
     - docker logout ${CI_REGISTRY}
 
 unit-test-job:
   stage: test
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - echo "Running unit tests... This will take about 60 seconds."
-    - sleep 60
-    - echo "Code coverage is 90%"
+    - docker-compose -f src/TheDotFactoryChanges/docker-compose-test.yml up -d
+  after_script:
+    - docker logout ${CI_REGISTRY}
 
 integration-test-job:
   stage: test
