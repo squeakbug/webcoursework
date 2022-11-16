@@ -72,8 +72,8 @@ namespace Service
         }
         public void SetOuterRect(Rectangle rect)
         {
-            if (!rect.Contains(_innerRect))
-                throw new ApplicationException("Outer rect must be greater than inner rect");
+            //if (!rect.Contains(_innerRect))
+            //    throw new ApplicationException("Outer rect must be greater than inner rect");
             if (rect.X < 0)
                 throw new ApplicationException("X coord must be positive");
             if (rect.Y < 0)
@@ -88,8 +88,8 @@ namespace Service
         }
         public void SetInnerRect(Rectangle rect)
         {
-            if (!_outerRect.Contains(rect))
-                throw new ApplicationException("Outer rect must be greater than inner rect");
+            //if (!_outerRect.Contains(rect))
+            //    throw new ApplicationException("Outer rect must be greater than inner rect");
             if (rect.X < 0)
                 throw new ApplicationException("X coord must be positive");
             if (rect.Y < 0)

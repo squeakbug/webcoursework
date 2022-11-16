@@ -285,8 +285,11 @@ namespace Service
         {
             var fontRepo = _repositoryFactory.CreateFontRepository();
             var sysFont = new System.Drawing.Font(font.Name, font.Size);
-            if (sysFont.Name == "Microsoft Sans Serif" && font.Name != "Microsoft Sans Serif")
+            if ((sysFont.Name == "Microsoft Sans Serif" && font.Name != "Microsoft Sans Serif")
+                || (sysFont.Name == "DejaVu Sans" && font.Name != "DejaVu Sans"))
+            {
                 throw new ApplicationException("no such font in windows catalog");
+            }
 
             return await fontRepo.Create(font);
         }

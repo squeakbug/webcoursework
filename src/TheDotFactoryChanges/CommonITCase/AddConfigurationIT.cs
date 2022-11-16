@@ -17,29 +17,42 @@ namespace CommonITCase
         [Test]
         public async Task AddConfigurationTest()
         {
-            Common.CreateTestDatabase("the_dotfactory_test", "127.0.0.1");
             var snapshotName = "testdb";
             var snapshotPath = $@"/var/opt/mssql/data/{snapshotName}.ss";
-            Common.CreateDatabaseSnapshot("the_dotfactory_test", "127.0.0.1", snapshotName, snapshotPath);
-            var contextFactory = new DbContextFactory();
-            var repoFactory = new RepositoryFactory(contextFactory, "127.0.0.1", "the_dotfactory_test", "SA", "P@ssword", false);
-            var textRenderer = new WinFormsTextRendererAdapter();
-            var authService = new AuthService.AuthService(repoFactory);
-            var cvtService = new ConverterService(repoFactory, textRenderer);
-            await authService.RegistrateUser("user_001", "password", "password");
-            await authService.LoginUser("user_001", "password");
-
-            var cfgId = await cvtService.CreateConfig(new DataAccessInterface.Configuration
+            var serverAddr = "webapp_sqlserver";
+            var dbName = "the_dotfactory_test";
+            Common.RemoveTestSnapshot(serverAddr, snapshotName);
+            Common.CreateTestDatabase(dbName, serverAddr);
+            Common.CreateDatabaseSnapshot(dbName, serverAddr, snapshotName, snapshotPath);
+            try
             {
-                displayName = "displayName",
-            });
+                var contextFactory = new DbContextFactory();
+                var repoFactory = new RepositoryFactory(contextFactory, serverAddr, dbName, "SA", "P@ssword", false);
+                var textRenderer = new WinFormsTextRendererAdapter();
+                var authService = new AuthService.AuthService(repoFactory);
+                var cvtService = new ConverterService(repoFactory, textRenderer);
+                await authService.RegistrateUser("user_001", "password", "password");
+                await authService.LoginUser("user_001", "password");
 
-            var cfgRepo = repoFactory.CreateConfigRepository();
-            var cfg = await cfgRepo.GetConfigurationById(cfgId);
-            cfgRepo.Dispose();
-            Assert.NotNull(cfg);
-            Assert.AreEqual(cfg.displayName, "displayName");
-            Common.RestoreDatabaseBySnapshot("the_dotfactory_test", "127.0.0.1", snapshotName);
+                var cfgId = await cvtService.CreateConfig(new DataAccessInterface.Configuration
+                {
+                    displayName = "displayName",
+                });
+
+                var cfgRepo = repoFactory.CreateConfigRepository();
+                var cfg = await cfgRepo.GetConfigurationById(cfgId);
+                cfgRepo.Dispose();
+                Assert.NotNull(cfg);
+                Assert.AreEqual(cfg.displayName, "displayName");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Common.RestoreDatabaseBySnapshot(dbName, serverAddr, snapshotName);
+            }
         }
     }
 }

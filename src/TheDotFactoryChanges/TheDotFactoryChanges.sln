@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConverterServiceTest", "Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLServerDALTest", "SQLServerDALTest\SQLServerDALTest.csproj", "{B9053878-9E14-451F-9C75-03DED8D119C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonITCase", "CommonITCase\CommonITCase.csproj", "{E4DAFFC9-B7A8-4CCF-8BF6-2919E955846D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonITCase", "CommonITCase\CommonITCase.csproj", "{E4DAFFC9-B7A8-4CCF-8BF6-2919E955846D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2ETest", "E2ETest\E2ETest.csproj", "{FE70F09F-DC59-4F24-A3F3-AC072474BA23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E2ETest", "E2ETest\E2ETest.csproj", "{FE70F09F-DC59-4F24-A3F3-AC072474BA23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBBenchmark", "DBBenchmark\DBBenchmark.csproj", "{21A3EB9E-6A24-43DB-83D3-460543A2E8A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{FE70F09F-DC59-4F24-A3F3-AC072474BA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE70F09F-DC59-4F24-A3F3-AC072474BA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE70F09F-DC59-4F24-A3F3-AC072474BA23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21A3EB9E-6A24-43DB-83D3-460543A2E8A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21A3EB9E-6A24-43DB-83D3-460543A2E8A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21A3EB9E-6A24-43DB-83D3-460543A2E8A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21A3EB9E-6A24-43DB-83D3-460543A2E8A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
