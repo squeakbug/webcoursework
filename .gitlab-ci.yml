@@ -17,7 +17,9 @@ build-job:
   before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker-compose -f src/TheDotFactoryChanges/docker-compose-test.yml build
+    - docker-compose -f src/TheDotFactoryChanges/docker-compose-unit-test.yml build
+    - docker-compose -f src/TheDotFactoryChanges/docker-compose-integration-test.yml build
+    - docker-compose -f src/TheDotFactoryChanges/docker-compose-e2e-test.yml build
   after_script:
     - docker logout ${CI_REGISTRY}
 
