@@ -16,7 +16,7 @@ build-job:
   before_script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
   script:
-    - docker-compose -f src/TheDotFactoryChanges/docker-compose.yml build
+    - docker-compose -f src/TheDotFactoryChanges/docker-compose-test.yml build
   #  - docker-compose -f src\TheDotFactoryChanges\aspnetcore.dockerfile push
   after_script:
     - docker logout ${CI_REGISTRY}
