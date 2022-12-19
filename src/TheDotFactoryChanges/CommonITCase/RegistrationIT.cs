@@ -19,7 +19,11 @@ namespace CommonITCase
         [Test]
         public async Task RegistrationTest()
         {
-            var serverAddr = "webapp_sqlserver";
+            string serverAddr = "localhost,1433";
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                serverAddr = "webapp_sqlserver";
+            }
             var dbName = "the_dotfactory_test";
             var snapshotName = "testdb";
             var snapshotPath = $@"/var/opt/mssql/data/{snapshotName}.ss";

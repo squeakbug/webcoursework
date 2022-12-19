@@ -10,6 +10,7 @@ namespace DataAccessInterface
     {
         Task<IEnumerable<Font>> GetFonts();
         Task<Font> GetFontById(int id);
+        Font GetFirstOrDefaultFont();
         Task<int> Create(Font cfg);
         Task Update(Font cfg);
         Task Delete(int id);

@@ -17,9 +17,13 @@ namespace CommonITCase
         [Test]
         public async Task AddConfigurationTest()
         {
+            string serverAddr = "localhost,1433";
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                serverAddr = "webapp_sqlserver";
+            }
             var snapshotName = "testdb";
             var snapshotPath = $@"/var/opt/mssql/data/{snapshotName}.ss";
-            var serverAddr = "webapp_sqlserver";
             var dbName = "the_dotfactory_test";
             Common.RemoveTestSnapshot(serverAddr, snapshotName);
             Common.CreateTestDatabase(dbName, serverAddr);

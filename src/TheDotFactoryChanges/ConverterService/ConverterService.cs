@@ -11,7 +11,6 @@ namespace Service
     public class ConverterService : IConverterService
     {
         private Bitmap _bmp;
-        private System.Drawing.Font _font;
         private TabState _tabState;
         private string _inputText;
         private string _PEGFontName;
@@ -20,6 +19,7 @@ namespace Service
         private Dictionary<string, string> _textInsertions;
 
         private int _curConfigId = 0;
+        private int _curFontId = 0;
 
         private string _outputSourceText;
         private string _outputHeaderText;
@@ -43,7 +43,6 @@ namespace Service
         public ConverterService(IRepositoryFactory repositoryFactory, ITextRenderer textRenderer)
         {
             _bmp = null;
-            _font = null;
             _tabState = TabState.Text;
             _inputText = "";
             _PEGFontName = "";
@@ -53,6 +52,7 @@ namespace Service
 
             SetupTextInsertions();
             SetupConfiguration();
+            SetupFonts();
         }
 
         // === public ====
@@ -63,14 +63,6 @@ namespace Service
                 throw new ArgumentNullException("bitmap");
 
             _bmp = bmp;
-        }
-        public void UpdateFont(System.Drawing.Font font)
-        {
-            if (font == null)
-                throw new ArgumentNullException("font");
-
-            _font = font;
-            FontChanged?.Invoke(_font);
         }
         public void UpdateTabState(TabState state)
         {
@@ -93,8 +85,10 @@ namespace Service
         }
         public async Task ConvertFont(bool isPeg)
         {
-            if (_font == null)
-                throw new ClientErrorException("font not selected");
+            DataAccessInterface.Font modelFont = await GetCurrentFont();
+            if (modelFont == null)
+                throw new ClientErrorException("no current font");
+            var font = new System.Drawing.Font(modelFont.Name, modelFont.Size);
 
             if (_inputText.Length == 0) return;
 
@@ -113,12 +107,12 @@ namespace Service
                 if (isPeg)
                 {
                     IFontVisualiser visualizer = new PEGFontVisualizer(cfg, _PEGFontName);
-                    visualizer.GetDump(_font, _inputText, out _outputSourceText, out _outputHeaderText, _textRenderer);
+                    visualizer.GetDump(font, _inputText, out _outputSourceText, out _outputHeaderText, _textRenderer);
                 }
                 else
                 {
                     IFontVisualiser visualizer = new FontVisualizer(cfg);
-                    visualizer.GetDump(_font, _inputText, out _outputSourceText, out _outputHeaderText, _textRenderer);
+                    visualizer.GetDump(font, _inputText, out _outputSourceText, out _outputHeaderText, _textRenderer);
                 }
 
                 OutputSourceTextChanged?.Invoke(_outputSourceText);
@@ -228,9 +222,10 @@ namespace Service
         {
             return _bmp;
         }
-        public System.Drawing.Font GetCurrentFont()
+        public async Task<DataAccessInterface.Font> GetCurrentFont()
         {
-            return _font;
+            var fontRepo = _repositoryFactory.CreateFontRepository();
+            return await fontRepo.GetFontById(_curFontId);
         }
 
         public async Task<IEnumerable<string>> GetFontNames()
@@ -278,7 +273,7 @@ namespace Service
             if (font == null)
                 throw new NotFoundException("no font with such id");
 
-            _font = new System.Drawing.Font(font.Name, font.Size);
+            _curFontId = id;
         }
 
         public async Task<int> AddFont(DataAccessInterface.Font font)
@@ -379,6 +374,24 @@ namespace Service
             else
             {
                 _curConfigId = cfgRepo.GetFirstOrDefaultConfig().Id;
+            }
+        }
+        private async Task SetupFonts()
+        {
+            var fontRepo = _repositoryFactory.CreateFontRepository();
+            var fonts = new List<DataAccessInterface.Font>(await fontRepo.GetFonts());
+            _curFontId = -1;
+            if (fonts.Count == 0)
+            {
+                _curFontId = await fontRepo.Create(new DataAccessInterface.Font 
+                {
+                    Name = "Verdana",
+                    Size = 10
+                });
+            }
+            else
+            {
+                _curFontId = fontRepo.GetFirstOrDefaultFont().Id;
             }
         }
     }

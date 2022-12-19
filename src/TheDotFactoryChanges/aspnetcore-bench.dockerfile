@@ -23,5 +23,7 @@ RUN dotnet publish -c Release -o /app --no-restore
 
 FROM mcr.microsoft.com/dotnet/runtime:3.1 AS runtime
 WORKDIR /app
+RUN mkdir -p ./run_result
+COPY run-result/*.* ./run_result/
 COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "DBBenchmark.dll", "ss"]
+ENTRYPOINT ["dotnet", "DBBenchmark.dll", "ss", "/app/run_result/query_runs_ss.csv"]

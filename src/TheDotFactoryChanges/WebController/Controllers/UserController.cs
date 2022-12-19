@@ -165,7 +165,7 @@ namespace WebControllers.Controllers
         }
 
         [HttpGet, Route("users/login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(long))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> LoginAsync([FromQuery] string login, [FromQuery] string password)
@@ -182,7 +182,18 @@ namespace WebControllers.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
-            return Ok();
+            long userId;
+            try
+            {
+                userId = await Task.Run(() => _authService.LoginUser(login, password));
+            }
+            catch (ApplicationException ex)
+            {
+                _logger.Log(LogLevel.Error, ex.Message);
+                return StatusCode(500);
+            }
+
+            return Ok(userId);
         }
 
         [Authorize]

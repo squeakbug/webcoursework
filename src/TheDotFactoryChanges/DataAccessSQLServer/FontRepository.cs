@@ -31,6 +31,11 @@ namespace DataAccessSQLServer
             var font = await _ctx.Fonts.FindAsync(id);
             return font == null ? null : FontConverter.MapToBusinessEntity(font);
         }
+        public DataAccessInterface.Font GetFirstOrDefaultFont()
+        {
+            var font = (from f in _ctx.Fonts select f).FirstOrDefault();
+            return font == null ? null : FontConverter.MapToBusinessEntity(font);
+        }
         public async Task<int> Create(DataAccessInterface.Font font)
         {
             var dbFont = FontConverter.MapFromBusinessEntity(font);

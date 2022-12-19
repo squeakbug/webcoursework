@@ -10,6 +10,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace DBBenchmark
 {
@@ -75,21 +76,43 @@ namespace DBBenchmark
         public static void SSCreateTestDatabase(string dbname, string serverAddr, string user, string pass)
         {
             string connString = $"Data Source={serverAddr}; database=master; User Id={user}; Password={pass}; Pooling=False";
+            Console.WriteLine(connString);
+            var i = 0;
+            var connTryCount = 10;
+            var flag = false;
+            var delay = 2000;
 
-            using (SqlConnection cnn = new SqlConnection(connString))
+            while (i < connTryCount && flag == false)
             {
-                using (SqlCommand cmd = new SqlCommand())
+                try
                 {
-                    cmd.Connection = cnn;
-                    cmd.CommandTimeout = 1000;
-                    cmd.CommandText = $"IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{dbname}')" +
-                                      $"BEGIN \n" +
-                                      $"    CREATE DATABASE [{dbname}]\n" +
-                                      $"END\n";
-                    cnn.Open();
-                    cmd.ExecuteNonQuery();
+                    using (SqlConnection cnn = new SqlConnection(connString))
+                    {
+                        using (SqlCommand cmd = new SqlCommand())
+                        {
+                            cmd.Connection = cnn;
+                            cmd.CommandTimeout = 1000;
+                            cmd.CommandText = $"IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{dbname}')" +
+                                              $"BEGIN \n" +
+                                              $"    CREATE DATABASE [{dbname}]\n" +
+                                              $"END\n";
+                            cnn.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                        cnn.Close();
+                    }
+                    flag = true;
                 }
-                cnn.Close();
+                catch
+                {
+                    Thread.Sleep(delay * i + delay);
+                    i++;
+                }
+            }
+
+            if (i == connTryCount)
+            {
+                throw new Exception("Bad establishment try");
             }
         }
 

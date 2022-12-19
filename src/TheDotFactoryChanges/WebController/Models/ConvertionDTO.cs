@@ -7,6 +7,10 @@
 
         [Newtonsoft.Json.JsonProperty("head", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Name { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("head", Required = Newtonsoft.Json.Required.Always)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Head { get; set; }
 
         [Newtonsoft.Json.JsonProperty("body", Required = Newtonsoft.Json.Required.Always)]

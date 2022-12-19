@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { FullRoutes } from 'src/app/configs/routes.config';
 
@@ -9,8 +10,15 @@ import { FullRoutes } from 'src/app/configs/routes.config';
 })
 export class FooterComponent {
 
+    @Input() MainAddr: string = "";
+    @Input() FragmentName: string = "";
     routes = FullRoutes;
-    constructor() {
+    constructor(private router: Router) {
         
+    }
+
+    onUpClicked() {
+        let element = document.getElementById(this.FragmentName);
+        element?.scrollIntoView();
     }
 }

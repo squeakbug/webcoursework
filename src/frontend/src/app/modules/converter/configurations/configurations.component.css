@@ -1,0 +1,29 @@
+.card {
+    border-radius: 1.25rem;
+    background-color: #A0A0A0;
+}
+
+label {
+    color: #EBEBEB;
+}
+
+h2 {
+    color: #EBEBEB;
+}
+
+.form-control-lg {
+    border-color: #635A55;
+    border-radius: 1.5rem;
+    border-width: 4px;
+}
+
+.btn {
+    background-color: #635A55;
+    border-color: #EBEBEB;
+    border-radius: 0.5rem;
+    border-width: 1px;
+}
+
+legend {
+    color: #EBEBEB;
+}

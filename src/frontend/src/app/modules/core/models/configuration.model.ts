@@ -1,31 +1,31 @@
-export interface Configuration {
-    id: number,
-    userId: string,
-    commentVariableName: string,
-    commentCharVisualizer: string,
-    commentCharDescriptor: string,
-    commentStyle: string,
-    bmpVisualizerChar: string,
-    rotation: string,
-    flipHorizontal: string,
-    flipVertical: string,
-    paddingRemovalHorizontal: string,
-    paddingRemovalVertical: string,
-    bitLayout: string,
-    byteOrder: string,
-    byteFormat: string,
-    generateLookupArray: string,
-    generateSpaceCharacterBitmap: string,
-    spaceGenerationPixels: string,
-    minHeight: string,
-    varNfBitmaps: string,
-    varNfCharInfo: string,
-    varNfFontInfo: string,
-    varNfWidth: string,
-    varNfHeight: string,
-    displayName: string,
-    commentStartString: string,
-    commentBlockEndString: string,
-    commentBlockMiddleString: string,
-    commentEndString: string
+export class Configuration {
+    id: number = 0;
+    userId: number = 0;
+    commentVariableName: boolean = false;
+    commentCharVisualizer: boolean = false;
+    commentCharDescriptor: boolean = false;
+    commentStyle: string = "";
+    bmpVisualizerChar: string = "";
+    rotation: string = "";
+    flipHorizontal: boolean = false;
+    flipVertical: boolean = false;
+    paddingRemovalHorizontal: string = "";
+    paddingRemovalVertical: string = "";
+    bitLayout: string = "";
+    byteOrder: string = "";
+    byteFormat: string = "";
+    generateLookupArray: boolean = false;
+    generateSpaceCharacterBitmap: boolean = false;
+    spaceGenerationPixels: number = 0;
+    minHeight: number = 0;
+    varNfBitmaps: string = "";
+    varNfCharInfo: string = "";
+    varNfFontInfo: string = "";
+    varNfWidth: string = "";
+    varNfHeight: string = "";
+    displayName: string = "";
+    commentStartString: string = "";
+    commentBlockEndString: string = "";
+    commentBlockMiddleString: string = "";
+    commentEndString: string = "";
 };

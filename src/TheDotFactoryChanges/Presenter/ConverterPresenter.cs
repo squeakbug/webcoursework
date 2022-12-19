@@ -224,7 +224,7 @@ namespace Presenter
             _txtImageName = Path.GetFileNameWithoutExtension(filename);
             _service.UpdateBitmap(bmp);
         }
-        private void UpdateSelectedFont(System.Drawing.Font fnt)
+        private void UpdateSelectedFont(DataAccessInterface.Font fnt)
         {
             _service.UpdateFont(fnt);
         }

@@ -18,7 +18,7 @@ namespace Presenter
         void SetSaveFileDialogFileName(string filename);
         void SetInputFontEntryText(string str);
         void SetInputFontEntryFont(Font font);
-        event Action<Font> FontSelected;
+        event Action<DataAccessInterface.Font> FontSelected;
         event Action<string> txtBoxPEGFontNameChanged;
 
         // InputText

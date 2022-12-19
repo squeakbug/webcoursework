@@ -1,0 +1,59 @@
+version: "3.3"
+
+services:
+  webapp:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: aspnetcore-bench.dockerfile
+    ports:
+      - 80
+      - 59000-60000:59572
+      - 1433
+      - 5432
+    restart: always
+    environment:
+      - DOTNET_SS=1
+    networks:
+      - aspnetcoreapp-network
+    depends_on:
+      - ssdb
+      - pgdb
+  ssdb:
+    container_name: webapp_sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: "P@ssword"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - type: volume
+        source: data-ss
+        target: /var/opt/mssql
+      - ./run-result:/var/opt/run-result
+    networks:
+      - aspnetcoreapp-network
+  pgdb:
+    container_name: webapp_postgresql
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - type: volume
+        source: data-pg
+        target: /var/opt/pgsql
+      - ./run-result:/var/opt/run-result
+    networks:
+      - aspnetcoreapp-network
+
+networks:
+  aspnetcoreapp-network:
+    driver: bridge
+    
+volumes:
+  data-pg:
+  data-ss:

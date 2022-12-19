@@ -106,6 +106,7 @@ namespace WebControllers.Controllers
                     {
                         Body = item.Body,
                         Head = item.Head,
+                        Name = item.Name,
                         Id = item.Id,
                     });
                 }

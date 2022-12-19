@@ -1,0 +1,16 @@
+{
+    "output": "/app/run-result/query_runs_ss.csv",
+    "suites": [
+        {
+            "file": "docker-compose-bench-ss.yml",
+            "args": ["ss", "/var/opt/mssql/data/the_dotfactory_test.ss"],
+            "docker-compose-args": ["webapp", "ssdb", "pgdb", "--rm"],
+            "runs": 100
+        },
+        {
+            "file": "docker-compose-bench-pg.yml",
+            "args": ["pg", "/var/opt/mssql/data/the_dotfactory_test.ss"],
+            "runs": 100
+        }
+    ]
+}

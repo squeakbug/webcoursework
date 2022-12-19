@@ -78,14 +78,7 @@ namespace AuthService
                 throw new NotFoundException($"no user with login = {login}");
             if (user.Password != password)
                 throw new ClientErrorException($"password is not correct");
-            if (user.Loggined == true)
-                throw new ClientErrorException($"user with id = {user.Id} already loggined");
-            user.Loggined = true;
 
-            using (var repo = _repositoryFactory.CreateUserRepository())
-            {
-                await repo.Update(user);
-            }
             return user.Id;
         }
         public async Task LogoutUser(int userId)
@@ -98,14 +91,6 @@ namespace AuthService
 
             if (user == null)
                 throw new ApplicationException($"no user with id = {userId}");
-            if (user.Loggined == false)
-                throw new ApplicationException($"user with id = {userId} not yet loggined");
-            user.Loggined = false;
-
-            using (var repo = _repositoryFactory.CreateUserRepository())
-            {
-                await repo.Update(user);
-            }
         }
         public async Task<int> RegistrateUser(string login, string password, string repPassword)
         {

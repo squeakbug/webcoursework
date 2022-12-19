@@ -14,8 +14,7 @@ namespace Presenter
         void UpdateBitmap(Bitmap bmp);
         Bitmap GetCurrentBitmap();
 
-        void UpdateFont(System.Drawing.Font font);
-        System.Drawing.Font GetCurrentFont();
+        Task<DataAccessInterface.Font> GetCurrentFont();
         event Action<System.Drawing.Font> FontChanged;
 
         void UpdateTabState(TabState state);

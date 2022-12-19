@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import { ConverterRoutingModule } from './converter-routing.module';
 import { HeaderComponent } from './header/header.component';
@@ -16,7 +17,10 @@ import { ConfigurationsComponent } from './configurations/configurations.compone
     ConfigurationsComponent
   ],
   imports: [
-    ConverterRoutingModule
+    ConverterRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    CommonModule
   ],
   providers: [],
 })

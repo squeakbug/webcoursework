@@ -1,5 +1,5 @@
-export interface Font {
-    id: number,
-    name: string,
-    size: number
+export class Font {
+    id: number = 0;
+    name: string = "";
+    size: number = 0;
 }

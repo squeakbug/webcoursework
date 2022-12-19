@@ -1,5 +1,328 @@
-<app-converter-header></app-converter-header>
+<app-converter-header [IsMain]="isMain" id="header"></app-converter-header>
 
-<h1>Data of {{id}} Configuration</h1>
+<section class="vh-200 gradient-custom">
+  <div class="container py-5 h-200">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-8">
+        <div class="card">
+          <div class="card-body p-5 text-center">
 
-<app-converter-footer></app-converter-footer>
+            <form class="mb-5">
+              <div class="row col-10 offset-1">
+                <div class="col-7">
+                  <input type="text" class="form-control" placeholder="" readonly [value]="displayName">
+                </div>
+                <div class="col-4 offset-1">
+                  <div type="button" class="btn btn-primary form-control" (click)="onCreateConfig()">
+                    Создать
+                  </div>
+                </div>
+              </div>
+
+              <div class="row col-10 offset-1 py-2">
+                <div class="col-4 offset-8">
+                  <div type="button" class="btn btn-danger form-control" (click)="onDeleteConfig()">
+                    Удалить
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <form>
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка отображения</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Тип поворота
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="rotation" name="rotation"/>
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Зеркальное отображение по горизонтальной оси
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder=""
+                      [(ngModel)]="flipHorizontal" name="flipHorizontal" />
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Зеркальное отображение по вертикальной оси
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder="" 
+                      [(ngModel)]="flipVertical" name="flipVertical" />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка отступов</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Отступ по ширине
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder=""
+                      [(ngModel)]="paddingRemovalHorizontal" name="paddingRemovalHorizontal" />
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Отступ по высоте
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder=""
+                      [(ngModel)]="paddingRemovalVertical" name="paddingRemovalVertical" />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка комментариев</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Комментарии для переменных
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder=""
+                      [(ngModel)]="commentVariableName" name="commentVariableName"/>
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Комментарии для каждого символа
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder="" 
+                      [(ngModel)]="commentCharDescriptor" name="commentCharDescriptor"/>
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Символ для ASCII-графики
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder="" 
+                      [(ngModel)]="commentCharVisualizer" name="commentCharVisualizer"/>
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Стиль комментариев
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder=""
+                      [(ngModel)]="commentStyle" name="commentStyle" />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка формата</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Расположение битов
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="bitLayout" name="bitLayout">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Порядок байтов
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="byteOrder" name="byteOrder">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Формат представления
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="byteFormat" name="byteFormat">
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка названий переменных</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Битовые карты
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="varNfBitmaps" name="varNfBitmaps">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Структура дескрипторов
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="varNfCharInfo" name="varNfCharInfo">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Структура PEG шрифта
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="varNfFontInfo" name="varNfFontInfo">
+                  </div>
+                </div>
+                
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Высота шрифта
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="varNfHeight" name="varNfHeight">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Ширина шрифта
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" placeholder="" 
+                      [(ngModel)]="varNfWidth" name="varNfWidth">
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка минимальных размеров символов</legend>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Генерация пробелов-символов для спец-символов
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder="" 
+                      [(ngModel)]="generateSpaceCharacterBitmap" name="generateSpaceCharacterBitmap">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Минимальная ширина шрифта
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="number" placeholder="" 
+                      [(ngModel)]="spaceGenerationPixels" name="spaceGenerationPixels">
+                  </div>
+                </div>
+
+                <div class="row py-2">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Максимальная ширина шрифта
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="number" placeholder="" 
+                      [(ngModel)]="minHeight" name="minHeight">
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="border p-2">
+                <legend class="float-none w-auto p-2">Настройка дескрипторов</legend>
+
+                <div class="row py-4">
+                  <div class="col-4">
+                    <label for="rotateType">
+                      Создать таблицу дескрипторов
+                    </label>
+                  </div>
+                  <div class="col-7 offset-1">
+                    <input type="text" class="form-control" type="boolean" placeholder="" 
+                      [(ngModel)]="generateLookupArray" name="generateLookupArray">
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+            <div class="row col-12 pt-5">
+              <div class="col-4 offset-8">
+                <div type="button" class="btn btn-outline-light form-control" (click)="onSaveClicked()">
+                  Сохранить
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-converter-footer [MainAddr]="mainAddr" [FragmentName]="headerFragmentName"></app-converter-footer>

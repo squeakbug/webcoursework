@@ -46,6 +46,11 @@ namespace WebController
                         options.LoginPath = "/api/v1/users/login";
                         options.Cookie.Name = "auth_cookie";
                         options.AccessDeniedPath = "/static/index.html";
+                        options.Events.OnRedirectToLogin = (context) =>
+                        {
+                            context.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        };
                     });
 
             // Swashbuckle
@@ -57,7 +62,7 @@ namespace WebController
             services.AddSingleton<IRepositoryFactory>(new DataAccessSQLServer.RepositoryFactory
             (
                 new DbContextFactory(),
-                "192.168.10.104",
+                "192.168.10.101",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"

@@ -1,5 +1,6 @@
-export interface Convertion {
-    id: number,
-    head: string,
-    body: string
+export class Convertion {
+    id: number = 0;
+    name: string = "";
+    head: string = "";
+    body: string = "";
 }

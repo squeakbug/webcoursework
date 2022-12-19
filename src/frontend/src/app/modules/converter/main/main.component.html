@@ -1,5 +1,123 @@
-<app-converter-header></app-converter-header>
+<app-converter-header [IsMain]="isMain" id=header></app-converter-header>
 
-<h1>Main</h1>
+<section class="vh-200 gradient-custom">
+  <div class="container py-5 h-200">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-8">
+        <div class="card">
+          <div class="card-body p-5 text-center">
 
-<app-converter-footer></app-converter-footer>
+            <div class="row justify-content-center align-items-center py-2">
+              <div class="col-8 text-center">
+                <select class="form-select" [(ngModel)]="selectedFont" required>
+                  <option selected disabled value="">Шрифт</option>
+                  <option *ngFor="let font of fonts" [ngValue]="font">{{font.name}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center py-2">
+              <div class="col-8 text-center">
+                <select class="form-select" [(ngModel)]="selectedConfig" required>
+                  <option selected disabled value="">Конфигурация</option>
+                  <option *ngFor="let config of configs" [ngValue]="config">{{config.displayName}}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row py-2">
+              <div class="col-9">
+                <div class="col-1 offset-11">
+                  <div type="button" class="btn btn-outline-light" (click)="onChangeConfigClicked()">
+                    Изменить
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center py-2">
+              <div class="col-8 form-group">
+                <div class="form-check">
+                  <div class="row py-2">
+                    <div class="col-8">
+                      <input class="form-check-input" type="radio"
+                          name="flexRadioDefault" id="flexRadioDefault1" [value]="1" [(ngModel)]="radio" />
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        Конвертировать по шаблону
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" [(ngModel)]="template"></textarea>
+              </div>
+            </div>
+              
+            <div class="row justify-content-center align-items-center py-2">
+              <div class="col-8 form-group">
+                <div class="form-check">
+                  <div class="row py-2">
+                    <div class="col-8">
+                      <input class="form-check-input" type="radio"
+                          name="flexRadioDefault" id="flexRadioDefault2" [value]="2" [(ngModel)]="radio" />
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        Использовать предыдущую конвертацию
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-center align-items-center py-2">
+                  <div class="col-12 text-center">
+                    <select class="form-select" [(ngModel)]="selectedCvt" required>
+                      <option selected disabled value="">Конвертация</option>
+                      <option *ngFor="let cvt of cvts" [ngValue]="cvt">{{cvt.name}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center py-2">
+              <div type="button" class="btn btn-outline-light col-4" (click)="onConvertClicked()">
+                  Конвертировать
+              </div>
+            </div>
+
+            <div class="row pt-5">
+              <div class="container">
+                <div class="row justify-content-center align-items-center py-2">
+                  <div class="col-8 form-group">
+                    <label for="exampleFormControlTextarea1">Заголовок</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly>{{header}}</textarea>
+                  </div>
+                </div>
+
+                <div class="row justify-content-center align-items-center py-2">
+                  <div class="col-8 form-group">
+                    <label for="exampleFormControlTextarea1">Тело</label>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly>{{body}}</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <form class="mt-5">
+              <div class="row col-8 offset-2">
+                <div class="col-7">
+                  <input type="text" class="form-control" placeholder="" [(ngModel)]="saveCvtName">
+                </div>
+                <div class="col-4 offset-1">
+                  <div type="button" class="btn btn-primary form-control" (click)="onSaveConvertionClicked()">
+                    Сохранить
+                  </div>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-converter-footer [MainAddr]="mainAddr" [FragmentName]="headerFragmentName"></app-converter-footer>
