@@ -22,7 +22,7 @@ build-job:
     - docker-compose -f src/TheDotFactoryChanges/docker-compose-e2e-test.yml build
   after_script:
     - docker logout ${CI_REGISTRY}
-
+ 
 unit-test-job:
   stage: test
   before_script:
