@@ -3,15 +3,16 @@ version: "3.3"
 services:
   webapp:
     depends_on:
-      - db
+      - ssdb
     build:
       context: .
-      dockerfile: aspnetcore-bench.dockerfile
+      dockerfile: aspnetcore-bench-ss.dockerfile
     ports:
       - 80
       - 59000-60000:59572
       - 1433
       - 5432
+      - 8050
     restart: always
     environment:
       - DOTNET_SS=1
@@ -23,15 +24,10 @@ services:
         source: data-ss
         target: /var/opt/mssql
       - type: bind
-        bind:
-          propagation: shared
         source: D:\Gitlab\webcoursework\src\TheDotFactoryChanges\run-result
         target: /app/run-result
     networks:
       - aspnetcoreapp-network
-    depends_on:
-      - ssdb
-      - pgdb
   ssdb:
     container_name: webapp_sqlserver
     image: mcr.microsoft.com/mssql/server:2019-latest

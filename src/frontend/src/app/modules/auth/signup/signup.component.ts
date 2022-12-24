@@ -24,6 +24,7 @@ export class SignUpComponent {
         this.authService.registrate(this.login, this.password, this.repPassword).subscribe({
             next:(data: any) => { 
                 this.router.navigate([`${this.routes.login}`]);
+                alert("Успешная регистрация")
             },
             error: error => {
                 console.log(error);

@@ -58,8 +58,7 @@ namespace DBBenchmark
                 .UseSqlServer(new DbContextOptionsBuilder(), connString)
                 .Options;
 
-            FillTestDatabase(options);
-            
+            FillTestDatabase(options);            
         }
 
         public static void PgFillTestDatabase(string dbname, string serverAddr, string user, string pass)
@@ -118,22 +117,42 @@ namespace DBBenchmark
 
         public static void PgCreateTestDatabase(string dbname, string serverAddr, string user, string pass)
         {
-            string connString = $"Server={serverAddr}; Database={dbname}; Username={user}; Password={pass}";
+            string connString = $"Server={serverAddr}; Port=5432; Database=postgres; User Id={user}; Password={pass}; Pooling=False;";
+            Console.WriteLine(connString);
+            var i = 0;
+            var connTryCount = 10;
+            var flag = false;
+            var delay = 2000;
 
-            using (NpgsqlConnection cnn = new NpgsqlConnection(connString))
+            while (i < connTryCount && flag == false)
             {
-                using (NpgsqlCommand cmd = new NpgsqlCommand())
+                try
                 {
-                    cmd.Connection = cnn;
-                    cmd.CommandTimeout = 1000;
-                    cmd.CommandText = $"IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '{dbname}')" +
-                                      $"BEGIN \n" +
-                                      $"    CREATE DATABASE {dbname}\n" +
-                                      $"END\n";
-                    cnn.Open();
-                    cmd.ExecuteNonQuery();
+                    using (NpgsqlConnection cnn = new NpgsqlConnection(connString))
+                    {
+                        using (NpgsqlCommand cmd = new NpgsqlCommand())
+                        {
+                            cmd.Connection = cnn;
+                            cmd.CommandTimeout = 1000;
+                            cmd.CommandText = $"DROP DATABASE IF EXISTS {dbname};" +
+                                              $"CREATE DATABASE {dbname};";
+                            cnn.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                        cnn.Close();
+                    }
+                    flag = true;
                 }
-                cnn.Close();
+                catch
+                {
+                    Thread.Sleep(delay * i + delay);
+                    i++;
+                }
+            }
+
+            if (i == connTryCount)
+            {
+                throw new Exception("Bad establishment try");
             }
         }
 
@@ -162,7 +181,7 @@ namespace DBBenchmark
         public static void PgCreateDatabaseSnapshot(string dbname, string serverAddr,
             string snapshotName, string snapshotPath, string user, string pass)
         {
-            string connString = $"Server={serverAddr}; Database={dbname}; Username={user}; Password={pass}";
+            string connString = $"Server={serverAddr}; Port=5432; Database={dbname}; User Id={user}; Password={pass}; Pooling=false";
 
             using (NpgsqlConnection cnn = new NpgsqlConnection(connString))
             {
@@ -171,9 +190,7 @@ namespace DBBenchmark
                     cmd.Connection = cnn;
                     cmd.CommandTimeout = 1000;
                     cmd.CommandText = $"CREATE DATABASE {snapshotName} " +
-                                      $"ON ( NAME = {dbname}," +
-                                      $"     FILENAME = '{snapshotPath}' ) " +
-                                      $"     AS SNAPSHOT OF {dbname};";
+                                      $"TEMPLATE {dbname}";
                     cnn.Open();
                     cmd.ExecuteNonQuery();
                 }
@@ -205,7 +222,7 @@ namespace DBBenchmark
         public static void PgRestoreDatabaseBySnapshot(string dbname, string serverAddr,
             string snapshotName, string user, string pass)
         {
-            string connString = $"Server={serverAddr}; Database={dbname}; Username={user}; Password={pass}";
+            string connString = $"Server={serverAddr}; Port=5432; Database={dbname}; User Id={user}; Password={pass}; Pooling=false";
 
             using (NpgsqlConnection cnn = new NpgsqlConnection(connString))
             {
@@ -213,9 +230,8 @@ namespace DBBenchmark
                 {
                     cmd.Connection = cnn;
                     cmd.CommandTimeout = 1000;
-                    cmd.CommandText = $"RESTORE DATABASE {dbname} " +
-                                      $"FROM DATABASE_SNAPSHOT = '{snapshotName}'; " +
-                                      $"DROP DATABASE {snapshotName};";
+                    cmd.CommandText = $"DROP DATABASE IF EXISTS {snapshotName};" +
+                                      $"CREATE DATABASE {snapshotName};";
                     cnn.Open();
                     cmd.ExecuteNonQuery();
                 }

@@ -62,7 +62,7 @@ namespace WebController
             services.AddSingleton<IRepositoryFactory>(new DataAccessSQLServer.RepositoryFactory
             (
                 new DbContextFactory(),
-                "192.168.10.101",
+                "172.16.84.34",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"

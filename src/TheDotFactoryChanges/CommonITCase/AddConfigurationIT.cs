@@ -46,6 +46,7 @@ namespace CommonITCase
                 var cfgRepo = repoFactory.CreateConfigRepository();
                 var cfg = await cfgRepo.GetConfigurationById(cfgId);
                 cfgRepo.Dispose();
+
                 Assert.NotNull(cfg);
                 Assert.AreEqual(cfg.displayName, "displayName");
             }
