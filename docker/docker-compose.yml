@@ -13,6 +13,7 @@ services:
       - /usr/share/nginx/html
     ports:
       - 80:80
+      - 443:443
       - 59572
       - 1433
     restart: always
