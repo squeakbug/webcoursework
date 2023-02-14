@@ -8,11 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 
-using WebControllers.Controllers;
-using DataAccessInterface;
-using Presenter;
-using AuthService;
 using WebControllers.Models;
+using Domain.Services;
+using Domain.Entities;
+using Domain.Errors;
 
 namespace WebControllers.Controllers
 {
@@ -79,7 +78,6 @@ namespace WebControllers.Controllers
                 {
                     Id = item.Id,
                     Name = item.Name,
-                    Size = item.Size,
                 });
             }
 
@@ -98,34 +96,7 @@ namespace WebControllers.Controllers
             {
                 Id = modelFont.Id,
                 Name = modelFont.Name,
-                Size = modelFont.Size,
             });
-        }
-
-        [Authorize]
-        [HttpPost, Route("fonts")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(string))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> FontPOST([FromBody] FontDTO font)
-        {
-            int id;
-            try
-            {
-                id = await Task.Run(() => _service.AddFont(new Font
-                {
-                    Id = (int)font.Id,
-                    Name = font.Name,
-                    Size = (int)font.Size,
-                }));
-            }
-            catch (ApplicationException ex)
-            {
-                _logger.Log(LogLevel.Error, ex.Message);
-                return StatusCode(500);
-            }
-            return Ok(id.ToString());
         }
 
         [Authorize]
@@ -141,7 +112,6 @@ namespace WebControllers.Controllers
                 {
                     Id = (int)fontId,
                     Name = font.Name,
-                    Size = (int)font.Size,
                 }));
             }
             catch (ApplicationException ex)

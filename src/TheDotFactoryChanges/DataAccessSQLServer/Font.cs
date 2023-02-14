@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class Font
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Size { get; set; }
     }
 }

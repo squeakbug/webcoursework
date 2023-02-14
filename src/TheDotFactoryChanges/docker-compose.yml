@@ -9,7 +9,7 @@ services:
       dockerfile: aspnetcore.dockerfile
     ports:
       - 80
-      - 59000-60000:59572
+      - 59000-60000:59573
       - 1433
     restart: always
     networks:

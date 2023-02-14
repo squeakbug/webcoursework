@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using DataAccessInterface;
-using Presenter;
+using Domain.Entities;
+using Domain.Services;
+using Domain.Repositories;
+using Domain.Errors;
 
-namespace AuthService
+namespace Application.AuthService
 {
     public class AuthService : IAuthService
     {

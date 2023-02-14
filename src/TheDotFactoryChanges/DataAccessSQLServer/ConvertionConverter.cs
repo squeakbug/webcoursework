@@ -2,28 +2,26 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class ConvertionConverter
     {
-        public static DataAccessInterface.Convertion MapToBusinessEntity(Convertion cvt)
+        public static Domain.Entities.Convertion MapToBusinessEntity(Convertion cvt)
         {
-            return new DataAccessInterface.Convertion
+            return new Domain.Entities.Convertion
             {
                 Id = cvt.Id,
                 Body = cvt.Body,
-                Head = cvt.Head,
                 Name = cvt.Name,
             };
         }
 
-        public static Convertion MapFromBusinessEntity(DataAccessInterface.Convertion cvt)
+        public static Convertion MapFromBusinessEntity(Domain.Entities.Convertion cvt)
         {
             return new Convertion
             {
                 Id = cvt.Id,
                 Body = cvt.Body,
-                Head = cvt.Head,
                 Name = cvt.Name,
             };
         }

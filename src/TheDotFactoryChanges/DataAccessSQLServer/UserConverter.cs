@@ -1,10 +1,10 @@
-﻿namespace DataAccessSQLServer
+﻿namespace Infrastructure.DataAccessSQLServer
 {
     public static class UserConverter
     {
-        public static DataAccessInterface.UserInfo MapToBusinessEntity(UserInfo info)
+        public static Domain.Entities.UserInfo MapToBusinessEntity(UserInfo info)
         {
-            return new DataAccessInterface.UserInfo
+            return new Domain.Entities.UserInfo
             {
                 Id = info.Id,
                 Login = info.Usr_login,
@@ -14,7 +14,7 @@
             };
         }
 
-        public static UserInfo MapFromBusinessEntity(DataAccessInterface.UserInfo info)
+        public static UserInfo MapFromBusinessEntity(Domain.Entities.UserInfo info)
         {
             return new UserInfo
             {

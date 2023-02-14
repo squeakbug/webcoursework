@@ -1,4 +1,4 @@
-﻿namespace DataAccessSQLServer
+﻿namespace Infrastructure.DataAccessSQLServer
 {
     public class UserInfo
     {

@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public interface IDbContext
     {
         DbSet<UserInfo> UserInfo { get; set; }
-        DbSet<UserConfig> UserConfig { get; set; }
         DbSet<Convertion> Convertions { get; set; }
         DbSet<Font> Fonts { get; set; }
 
         IQueryable<UserInfo> GetUserInfoSet();
-        IQueryable<UserConfig> GetUserConfigSet();
         IQueryable<Convertion> GetConvertionSet();
         IQueryable<Font> GetFontSet();
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using DataAccessInterface;
+using Domain.Repositories;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class UserRepository : IUserRepository
     {
@@ -17,20 +17,20 @@ namespace DataAccessSQLServer
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
 
-        public async Task<IEnumerable<DataAccessInterface.UserInfo>> GetUserInfos()
+        public async Task<IEnumerable<Domain.Entities.UserInfo>> GetUserInfos()
         {
-            var result = new List<DataAccessInterface.UserInfo>();
+            var result = new List<Domain.Entities.UserInfo>();
             IQueryable<UserInfo> users = _ctx.GetUserInfoSet();
             foreach (var info in users.AsParallel())
                 result.Add(UserConverter.MapToBusinessEntity(info));
             return result;
         }
-        public async Task<DataAccessInterface.UserInfo> GetUserById(int id)
+        public async Task<Domain.Entities.UserInfo> GetUserById(int id)
         {
             var info = await _ctx.UserInfo.FindAsync(id);
             return info == null ? null : UserConverter.MapToBusinessEntity(info);
         }
-        public async Task<DataAccessInterface.UserInfo> GetUserByLogin(string login)
+        public async Task<Domain.Entities.UserInfo> GetUserByLogin(string login)
         {
             IQueryable<UserInfo> users = _ctx.GetUserInfoSet();
             var info = (from user in users.AsParallel()
@@ -38,7 +38,7 @@ namespace DataAccessSQLServer
                         select user).FirstOrDefault();
             return info == null ? null : UserConverter.MapToBusinessEntity(info);
         }
-        public async Task<int> Create(DataAccessInterface.UserInfo info)
+        public async Task<int> Create(Domain.Entities.UserInfo info)
         {
             UserInfo dbModel = UserConverter.MapFromBusinessEntity(info);
             _ctx.UserInfo.Add(dbModel);
@@ -52,7 +52,7 @@ namespace DataAccessSQLServer
             }
             return dbModel.Id;
         }
-        public async Task Update(DataAccessInterface.UserInfo info)
+        public async Task Update(Domain.Entities.UserInfo info)
         {
             _ctx.UserInfo.Update(UserConverter.MapFromBusinessEntity(info));
             try

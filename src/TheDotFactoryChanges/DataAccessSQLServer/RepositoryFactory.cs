@@ -1,10 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System;
+
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Domain.Repositories;
 
-using DataAccessInterface;
-using System;
-
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class RepositoryFactory : IRepositoryFactory
     {
@@ -53,15 +53,6 @@ namespace DataAccessSQLServer
             var globalCtx = _dbContextFactory.CreateContext(options);
             globalCtx.DatabaseEnsureCreated();
             return new UserRepository(globalCtx);
-        }
-        public IConfigRepository CreateConfigRepository()
-        {
-            var options = SqlServerDbContextOptionsExtensions
-                .UseSqlServer(new DbContextOptionsBuilder(), ConnectionString)
-                .Options;
-            var globalCtx = _dbContextFactory.CreateContext(options);
-            globalCtx.DatabaseEnsureCreated();
-            return new ConfigRepository(globalCtx);
         }
 
         public IConvertionRepository CreateConvertionRepository()

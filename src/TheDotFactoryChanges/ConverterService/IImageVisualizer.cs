@@ -1,6 +1,0 @@
-﻿namespace Service
-{
-    interface IImageVisualizer
-    {
-    }
-}

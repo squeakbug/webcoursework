@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Authentication;
+using System.Text;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,18 +18,29 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Authentication.Cookies;
-
-using WebControllers.Controllers;
-using Service;
-using Presenter;
-using DataAccessInterface;
-using DataAccessSQLServer;
-using AuthService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http;
-using System.Security.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+
+using Domain.Services;
+using Domain.Repositories;
+using Application.AuthService;
+using Application.ConverterService;
+using Infrastructure.DataAccessSQLServer;
 
 namespace WebController
 {
+    public class AuthOptions
+    {
+        public const string ISSUER = "MyAuthServer"; // издатель токена
+        public const string AUDIENCE = "MyAuthClient"; // потребитель токена
+        const string KEY = "mysupersecret_secretkey!123";   // ключ для шифрации
+        public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
+    }
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -40,6 +55,7 @@ namespace WebController
         {
             services.AddControllers();
 
+            services.AddAuthorization();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
                     {
@@ -53,16 +69,14 @@ namespace WebController
                         };
                     });
 
-            // Swashbuckle
             services.AddSwaggerGen();
 
             services.AddTransient<IConverterService, ConverterService>();
-            services.AddTransient<IAuthService, AuthService.AuthService>();
-            services.AddSingleton<ITextRenderer>(new WinFormsTextRendererAdapter());
-            services.AddSingleton<IRepositoryFactory>(new DataAccessSQLServer.RepositoryFactory
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddSingleton<IRepositoryFactory>(new Infrastructure.DataAccessSQLServer.RepositoryFactory
             (
                 new DbContextFactory(),
-                "172.16.84.34",
+                "192.168.10.104",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"
@@ -77,7 +91,6 @@ namespace WebController
                 app.UseDeveloperExceptionPage();
             }
 
-            // Swashbuckle
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "api/v1/{documentname}/swagger.json";

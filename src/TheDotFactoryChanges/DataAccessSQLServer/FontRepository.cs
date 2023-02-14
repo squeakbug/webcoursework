@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Repositories;
 
-using DataAccessInterface;
-
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class FontRepository : IFontRepository
     {
@@ -18,25 +17,25 @@ namespace DataAccessSQLServer
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
 
-        public async Task<IEnumerable<DataAccessInterface.Font>> GetFonts()
+        public async Task<IEnumerable<Domain.Entities.Font>> GetFonts()
         {
-            var result = new List<DataAccessInterface.Font>();
+            var result = new List<Domain.Entities.Font>();
             IQueryable<DataAccessSQLServer.Font> fonts = _ctx.GetFontSet();
             foreach (var font in fonts)
                 result.Add(FontConverter.MapToBusinessEntity(font));
             return result;
         }
-        public async Task<DataAccessInterface.Font> GetFontById(int id)
+        public async Task<Domain.Entities.Font> GetFontById(int id)
         {
             var font = await _ctx.Fonts.FindAsync(id);
             return font == null ? null : FontConverter.MapToBusinessEntity(font);
         }
-        public DataAccessInterface.Font GetFirstOrDefaultFont()
+        public Domain.Entities.Font GetFirstOrDefaultFont()
         {
             var font = (from f in _ctx.Fonts select f).FirstOrDefault();
             return font == null ? null : FontConverter.MapToBusinessEntity(font);
         }
-        public async Task<int> Create(DataAccessInterface.Font font)
+        public async Task<int> Create(Domain.Entities.Font font)
         {
             var dbFont = FontConverter.MapFromBusinessEntity(font);
             _ctx.Fonts.Add(dbFont);
@@ -50,7 +49,7 @@ namespace DataAccessSQLServer
             }
             return dbFont.Id;
         }
-        public async Task Update(DataAccessInterface.Font font)
+        public async Task Update(Domain.Entities.Font font)
         {
             _ctx.Fonts.Update(FontConverter.MapFromBusinessEntity(font));
             try

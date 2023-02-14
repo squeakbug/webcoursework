@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Repositories;
 
-using DataAccessInterface;
-
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class ConvertionRepository : IConvertionRepository
     {
@@ -18,20 +17,20 @@ namespace DataAccessSQLServer
             _ctx = ctx ?? throw new ArgumentNullException("context");
         }
 
-        public async Task<IEnumerable<DataAccessInterface.Convertion>> GetConvertions()
+        public async Task<IEnumerable<Domain.Entities.Convertion>> GetConvertions()
         {
-            var result = new List<DataAccessInterface.Convertion>();
+            var result = new List<Domain.Entities.Convertion>();
             IQueryable<DataAccessSQLServer.Convertion> convertions = _ctx.GetConvertionSet();
             foreach (var cvt in convertions)
                 result.Add(ConvertionConverter.MapToBusinessEntity(cvt));
             return result;
         }
-        public async Task<DataAccessInterface.Convertion> GetConvertionById(int id)
+        public async Task<Domain.Entities.Convertion> GetConvertionById(int id)
         {
             var cvt = await _ctx.Convertions.FindAsync(id);
             return cvt == null ? null : ConvertionConverter.MapToBusinessEntity(cvt);
         }
-        public async Task<int> Create(DataAccessInterface.Convertion cvt)
+        public async Task<int> Create(Domain.Entities.Convertion cvt)
         {
             var dbCvt = ConvertionConverter.MapFromBusinessEntity(cvt);
             _ctx.Convertions.Add(dbCvt);
@@ -45,7 +44,7 @@ namespace DataAccessSQLServer
             }
             return dbCvt.Id;
         }
-        public async Task Update(DataAccessInterface.Convertion cvt)
+        public async Task Update(Domain.Entities.Convertion cvt)
         {
             _ctx.Convertions.Update(ConvertionConverter.MapFromBusinessEntity(cvt));
             try

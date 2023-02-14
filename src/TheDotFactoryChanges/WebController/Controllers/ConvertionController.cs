@@ -9,10 +9,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 using WebControllers.Controllers;
-using DataAccessInterface;
-using Presenter;
-using AuthService;
 using WebControllers.Models;
+using Domain.Services;
+using Domain.Entities;
+using Domain.Errors;
 
 namespace WebControllers.Controllers
 {
@@ -171,12 +171,7 @@ namespace WebControllers.Controllers
             string source, header;
             try
             {
-                await Task.Run(() => _service.SetCurrentConfig(configId));
-                await Task.Run(() => _service.SetCurrentFont(fontId));
-                _service.SetInputText(template);
-                await Task.Run(() => _service.ConvertFont(true));
-                source = _service.GetOutputSourceText();
-                header = _service.GetOutputHeaderText();
+                source = await Task.Run(() => _service.ConvertFont(fontId, template));
             }
             catch (NotAuthorizedException ex)
             {
@@ -197,7 +192,6 @@ namespace WebControllers.Controllers
             var response = new DoConvertionResponse
             {
                 Body = source,
-                Head = header,
             };
 
             return Ok(response);

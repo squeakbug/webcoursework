@@ -1,7 +1,7 @@
 <app-converter-header [IsMain]="isMain" id=header></app-converter-header>
 
-<section class="vh-200 gradient-custom">
-  <div class="container py-5 h-200">
+<section class="vh-300 gradient-custom">
+  <div class="container py-5 h-300">
     <div class="row justify-content-center align-items-center h-100">
       <div class="col-8">
         <div class="card">
@@ -13,25 +13,6 @@
                   <option selected disabled value="">Шрифт</option>
                   <option *ngFor="let font of fonts" [ngValue]="font">{{font.name}}</option>
                 </select>
-              </div>
-            </div>
-
-            <div class="row justify-content-center align-items-center py-2">
-              <div class="col-8 text-center">
-                <select class="form-select" [(ngModel)]="selectedConfig" required>
-                  <option selected disabled value="">Конфигурация</option>
-                  <option *ngFor="let config of configs" [ngValue]="config">{{config.displayName}}</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="row py-2">
-              <div class="col-9">
-                <div class="col-1 offset-11">
-                  <div type="button" class="btn btn-outline-light" (click)="onChangeConfigClicked()">
-                    Изменить
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -86,15 +67,8 @@
               <div class="container">
                 <div class="row justify-content-center align-items-center py-2">
                   <div class="col-8 form-group">
-                    <label for="exampleFormControlTextarea1">Заголовок</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly>{{header}}</textarea>
-                  </div>
-                </div>
-
-                <div class="row justify-content-center align-items-center py-2">
-                  <div class="col-8 form-group">
                     <label for="exampleFormControlTextarea1">Тело</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" readonly>{{body}}</textarea>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" readonly>{{body}}</textarea>
                   </div>
                 </div>
               </div>

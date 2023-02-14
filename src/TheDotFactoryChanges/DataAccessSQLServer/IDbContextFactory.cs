@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessSQLServer
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.DataAccessSQLServer
 {
     public interface IDbContextFactory
     {

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class Context : DbContext, IDbContext
     {
@@ -12,7 +12,6 @@ namespace DataAccessSQLServer
         { }
 
         public virtual DbSet<UserInfo> UserInfo { get; set; }
-        public virtual DbSet<UserConfig> UserConfig { get; set; }
         public virtual DbSet<Convertion> Convertions { get; set; }
         public virtual DbSet<Font> Fonts { get; set; }
 
@@ -20,11 +19,6 @@ namespace DataAccessSQLServer
         {
             base.Database.EnsureCreated();
             return UserInfo;
-        }
-
-        public virtual IQueryable<UserConfig> GetUserConfigSet()
-        {
-            return UserConfig;
         }
 
         public virtual IQueryable<Convertion> GetConvertionSet()

@@ -3,6 +3,11 @@ input[type=radio] {
     height: 30px;
 }
 
+textarea { 
+    font-family: "Courier";
+    white-space: pre-wrap;
+}
+
 .card {
     border-radius: 1.25rem;
     background-color: #A0A0A0;

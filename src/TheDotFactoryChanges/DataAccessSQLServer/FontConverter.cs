@@ -4,27 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessSQLServer
+namespace Infrastructure.DataAccessSQLServer
 {
     public class FontConverter
     {
-        public static DataAccessInterface.Font MapToBusinessEntity(Font font)
+        public static Domain.Entities.Font MapToBusinessEntity(Font font)
         {
-            return new DataAccessInterface.Font
+            return new Domain.Entities.Font
             {
                 Id = font.Id,
                 Name = font.Name,
-                Size = font.Size,
             };
         }
 
-        public static Font MapFromBusinessEntity(DataAccessInterface.Font font)
+        public static Font MapFromBusinessEntity(Domain.Entities.Font font)
         {
             return new Font
             {
                 Id = font.Id,
                 Name = font.Name,
-                Size = font.Size,
             };
         }
     }

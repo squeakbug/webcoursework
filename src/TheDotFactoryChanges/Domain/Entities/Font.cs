@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Infrastructure.DataAccessSQLServer
+namespace Domain.Entities
 {
-    public class Convertion
+    public class Font
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Body { get; set; }
     }
 }

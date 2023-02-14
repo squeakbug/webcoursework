@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 
-using WebControllers.Controllers;
-using DataAccessInterface;
-using Presenter;
 using WebControllers.Models;
+using Domain.Services;
+using Domain.Entities;
+using Domain.Errors;
 
 namespace WebControllers.Controllers
 {
@@ -66,7 +66,7 @@ namespace WebControllers.Controllers
                 };
                 users.Add(user);
             }
-
+            
             return Ok(users);
         }
 
