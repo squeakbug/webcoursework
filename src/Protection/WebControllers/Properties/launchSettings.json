@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "Protection": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "launchUrl": "api/v1",
+      "applicationUrl": "http://localhost:7269",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

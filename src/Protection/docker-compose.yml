@@ -1,0 +1,40 @@
+version: "3.3"
+
+services:
+  webapp:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: aspnetcore.dockerfile
+    ports:
+      - 80
+      - 443
+      - 59000-60000:7269
+      - 1433
+    restart: always
+    networks:
+      - aspnetcoreapp-network
+    depends_on:
+      - db
+  db:
+    container_name: webapp_sqlserver
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    environment:
+      SA_PASSWORD: "P@ssword"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - type: volume
+        source: data
+        target: /var/opt/mssql
+    networks:
+      - aspnetcoreapp-network
+
+networks:
+  aspnetcoreapp-network:
+    driver: bridge
+    
+volumes:
+  data:
