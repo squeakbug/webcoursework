@@ -10,7 +10,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddSingleton<IRepositoryFactory>(new RepositoryFactory(
-    "Server=192.168.10.104;Database=user_database;User Id=SA;Password=P@ssword;"
+    "Server=172.16.84.34;Database=user_database;User Id=SA;Password=P@ssword;"
 ));
 
 var app = builder.Build();

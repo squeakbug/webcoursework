@@ -11,6 +11,8 @@ services:
       - 80
       - 59000-60000:59573
       - 1433
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     restart: always
     networks:
       - aspnetcoreapp-network

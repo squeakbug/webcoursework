@@ -76,7 +76,7 @@ namespace WebController
             services.AddSingleton<IRepositoryFactory>(new Infrastructure.DataAccessSQLServer.RepositoryFactory
             (
                 new DbContextFactory(),
-                "192.168.10.104",
+                "172.16.84.34",
                 "thedotfactory_db",
                 "SA",
                 "P@ssword"
@@ -101,7 +101,7 @@ namespace WebController
                 c.RoutePrefix = "api/v1";
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
